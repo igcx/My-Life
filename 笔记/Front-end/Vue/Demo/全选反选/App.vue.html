@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+
+</head>
+
+<body>
+
+  <div id="app">
+    <div>
+      <span>全选:</span>
+      <!-- 4. v-model 关联全选 - 选中状态 -->
+      <input type="checkbox" v-model="isAll" />
+      <button @click="btn">反选</button>
+      <ul>
+        <li v-for="(obj, index) in arr" :key="index">
+          <!-- 3. 对象.c - 关联 选中状态 -->
+          <input type="checkbox" v-model="obj.c" />
+          <span>{{ obj.name }}</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    const app = new Vue({
+      el: '#app',
+      data() {
+        return {
+          arr: [
+            {
+              name: "猪八戒",
+              c: false,
+            },
+            {
+              name: "孙悟空",
+              c: false,
+            },
+            {
+              name: "唐僧",
+              c: false,
+            },
+            {
+              name: "白龙马",
+              c: false,
+            },
+          ],
+        }
+      },
+      computed: {
+        isAll: {
+          set(val) {
+            // 7. 全选框 - 选中状态(true/false)
+            this.arr.forEach(obj => obj.c = val)
+          },
+          get() {
+            // 6. 统计小选框状态 ->  全选状态
+            return this.arr.every(obj => obj.c === true)
+          }
+        }
+      },
+      methods: {
+        btn() {
+          // 8. 让数组里对象的c属性取反再赋予回去
+          this.arr.forEach(obj => obj.c = !obj.c)
+        }
+      }
+    })
+  </script>
+
+</body>
+
+</html>
