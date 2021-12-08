@@ -1,0 +1,28 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-size: 12px;
+}
+
+/* 覆盖表单左侧 label 的字体大小 */
+.el-form-item__label {
+  font-size: 12px;
+}
+
+.el-button {
+  font-size: 12px;
+}
+
+.el-table {
+  font-size: 12px;
+}
+
+.el-table thead {
+  color: #000;
+}
+
+.el-dialog__body {
+  padding: 10px 20px 0 20px;
+}
