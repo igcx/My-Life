@@ -1,4 +1,323 @@
-# 大事件项目
+# PC端 Vue 2.6 实现CMS系统
+
+## 技术栈
+
+MVVM框架: Vue 2.6
+
+源码: ES6
+
+代码风格: eslint
+
+构建工具: webpack
+
+前端路由: vue-router
+
+脚手架: vue-cli
+
+状态管理: Vuex
+
+服务端通讯: axios
+
+apiProxy: Nodejs
+
+组件库: Element-ui
+
+CSS预处理: less
+
+[项目演示地址](http://www.escook.cn:8086/ev/#/login)
+
+[接口文档](https://www.showdoc.com.cn/1425457596992351/6972620264462285)
+
+黑马刘龙彬老师主讲的大事件项目
+
+---
+
+## 项目搭建
+
+Node.js 环境安装
+
+``` bash
+ node -v #查看node版本 node版本12+
+ npm  -v #查看npm版本
+```
+
+npm、yarn 设置淘宝镜像
+
+``` bash
+ npm config set registry  https://registry.npm.taobao.org/  #设置淘宝镜像地址
+ npm config get registry  #查看镜像地址
+
+ yarn config set registry  https://registry.npm.taobao.org/  #设置淘宝镜像地址
+ yarn config get registry  #查看镜像地址
+```
+
+使用 vue 脚手架创建项目
+
+``` bash
+vue create big-event-vue
+```
+
+调整项目目录
+默认生成的目录结构不满足我们的开发需求，所以这里需要做一些自定义改动，主要是两个工作：
+
+- 删除初始化的默认文件
+- 修改剩余代码内容
+- 新增调整我们需要的目录结构
+
+1. 删除文件
+
+    - components/HelloWorld.vue
+    - views/Home.vue
+    - views/About.vue
+    - assets/logo.png
+
+2. 修改内容
+
+    `src/router/index.js`
+
+    ``` js
+    import Vue from 'vue'
+    import VueRouter from 'vue-router'
+
+    Vue.use(VueRouter)
+
+    const router = new VueRouter({
+      routes: []
+    })
+
+    export default router
+    ```
+
+    `src/App.vue`
+
+    ``` js
+    <template>
+      <div id="app">
+        <router-view></router-view>
+      </div>
+    </template>
+
+    <style lang="less">
+
+    </style>
+    ```
+
+    `store/index.js`  和 `main.js` 不用动
+
+3. 新增需要目录
+
+    在 src 目录下中补充创建以下目录：
+
+    - /api: 存储请求函数模块
+    - /styles: 样式文件模块
+    - /utils: 工具函数模块
+
+    ```bash
+    # 文件夹对应存放的文件
+    api # 接口方法封装
+    assets # 图片等静态资源
+    components # 通用组件
+    router # 路由
+    store # vuex仓库
+    styles # 全局样式
+    utils # 自己封装的一些工具函数
+    views # 视图组件
+    ```
+
+4. 将项目需要的全局样式的文件复制到styles文件夹中,并在`main.js`中引入
+
+    ``` css
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-size: 12px;
+    }
+
+    /* 覆盖表单左侧 label 的字体大小 */
+    .el-form-item__label {
+      font-size: 12px;
+    }
+
+    .el-button {
+      font-size: 12px;
+    }
+
+    .el-table {
+      font-size: 12px;
+    }
+
+    .el-table thead {
+      color: #000;
+    }
+
+    .el-dialog__body {
+      padding: 10px 20px 0 20px;
+    }
+
+    ```
+
+    ```js
+    // 导入全局样式
+    import '@/styles/global.css'
+    ```
+
+5. 将项目需要的图片资源放置`assets`文件夹中
+
+## 引入 Element-ui 组件库
+
+### 全部引入
+
+全部引入, 会导入所有的组件, 虽然方便, 但是将来的打包体积也就大了
+
+- 安装
+
+```js
+yarn add element-ui
+```
+
+- 在`main.js`中
+
+```js
+import ElementUI from 'element-ui';
+import 'element-ui/lib/theme-chalk/index.css';
+
+Vue.use(ElementUI);
+```
+
+- 演示
+
+```jsx
+<el-button type="primary">主要按钮</el-button>
+```
+
+### 按需导入
+
+减轻将来打包后的包的体积
+
+- 安装
+
+```js
+yarn add element-ui
+```
+
+- 安装`babel-plugin-component`
+
+```js
+yarn add babel-plugin-component -D
+```
+
+- 在` babel.config.js `中配置
+
+```js
+module.exports = {
+  presets: [
+    '@vue/cli-plugin-babel/preset'
+  ],
+  // 新增plugins插件节点,修改完配置文件一定重启项目
+  "plugins": [
+    [
+      "component",
+      {
+        "libraryName": "element-ui",
+        "styleLibraryName": "theme-chalk"
+      }
+    ]
+  ]
+}
+```
+
+- 使用插件`main.js`中
+
+```js
+import { Button } from 'element-ui'
+Vue.use(Button)
+```
+
+### 抽离element.js模块
+
+- 由于组件的导入都书写到了`main.js`中,导致`main.js` 代码冗余,将element-ui组件的导入和注册单独抽离到`utils`文件夹中
+- 新建element.js
+
+```js
+import Vue from 'vue'
+// 按需导入组件
+import {
+  Button,
+  Switch } from 'element-ui'
+
+// 注册全局组件
+Vue.use(Button)
+  .use(Switch)
+
+```
+
+- 直接导入main.js中
+
+```js
+// 直接导入element-ui.js
+import '@/utils/element.js'
+```
+
+### 关于@src目录路径提示的配置
+
+1. 在项目根目录下新建配置文件`jsconfig.json`
+
+    ```json
+    {
+        "compilerOptions": {
+            "baseUrl": "./",
+            "paths": {
+              "@/*": ["src/*"]
+            }
+        },
+        "exclude": [ "node_modules", "dist" ]
+    }
+    ```
+
+2. 重启项目 项目一定在根目录vscode中打开
+
+## 路由配置
+
+## 登录功能
+
+获取登录表单数据 el-form 添加 :model='表单整体数据'
+
+添加校验规则 el-form-item 添加prop
+
+注册点击按钮
+
+1. 表单的整体校验 validate 必须写成箭头函数 让this指向组件实例
+2. 发请求（axios）并且保存token 成功或失败（提示用户）
+3. 跳转到后台页面
+
+
+
+封装 axios 到 utils文件夹下
+
+
+
+拦截器 
+
+- 请求到达服务端之前 经过请求拦截器（统一给请求去添加一下东西 请求头）
+- 响应的数据真正回到客户端之前 经过响应拦截器（统一处理数据 ==> 脱掉一层）
+
+
+
+优化：网络较慢的时候用户频繁点击登录按钮会重复发起请求 ==> 解决 全局加上loading效果 或者 点击一次之后禁用按钮
+
+
+
+封装登录api接口
+
+
+
+## 注册功能
+
+
+
+## axios
 
 大事件是一个 CMS 后台管理项目，包含登录注册、个人中心、文章管理等主要模块。
 
@@ -18,3 +337,8 @@
 3. 用户注册与登录的业务解决方案
 4. 使用 Vuex 管理全局共享的数据
 5. 使用 axios 实现前后端的数据交互
+
+## 登录注册页面
+
+1. 在views里面新建登录文件夹 -> index页面  
+2. 配置路由规则在 router=> index.js
