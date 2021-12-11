@@ -16,7 +16,13 @@ import {
   Main,
   Menu,
   MenuItem,
-  Submenu
+  Submenu,
+  MessageBox,
+  Card,
+  Breadcrumb,
+  BreadcrumbItem,
+  Row,
+  Col
 } from 'element-ui'
 
 // 组件的注册
@@ -32,8 +38,17 @@ Vue.use(Button)
   .use(Menu)
   .use(MenuItem)
   .use(Submenu)
+  .use(Card)
+  .use(Breadcrumb)
+  .use(BreadcrumbItem)
+  .use(Row)
+  .use(Col)
 
+// 退出弹框
+Vue.prototype.$confirm = MessageBox.confirm
+// 消息提示
 Vue.prototype.$message = Message
+// 加载效果
 Vue.prototype.$loading = Loading.service
 
 // 组件库的使用方式:

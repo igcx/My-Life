@@ -14,7 +14,7 @@
             <el-input v-model="loginForm.username" prefix-icon="el-icon-user" placeholder="请输入用户名"></el-input>
         </el-form-item>
         <el-form-item prop="password">
-            <el-input type="password" v-model="loginForm.password" prefix-icon="el-icon-lock" placeholder="请输入密码"></el-input>
+            <el-input type="password" v-model="loginForm.password" prefix-icon="el-icon-lock" placeholder="请输入密码" show-password></el-input>
         </el-form-item>
         <el-button type="primary" class="btn-login" @click="login">登录</el-button>
         <el-link type="info" class="link-reg" @click="$router.push('/reg')">去注册账号</el-link>

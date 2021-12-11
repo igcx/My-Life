@@ -3,7 +3,7 @@
     <!-- 头部结构 -->
     <el-header>
       <!-- 左侧的 logo -->
-      <img src="~@/assets/images/logo.png" alt="" />
+      <img src="#" alt="" />
 
       <!-- 右侧的导航菜单 -->
       <!--
@@ -14,12 +14,13 @@
         active-text-color  高亮的文字颜色
        -->
       <el-menu
-        default-active="1"
+        :default-active="$route.path"
         class="el-menu-demo"
         background-color="#24262d"
         text-color="#fff"
         active-text-color="#4e87d1"
         mode="horizontal"
+        router
       >
         <el-submenu index="1">
           <template slot="title">
@@ -39,17 +40,11 @@
             <!-- <div v-else class="text-avatar">{{ $store.getters['user/defaultImg'] }}</div> -->
             个人中心
           </template>
-          <el-menu-item index="1-1"
-            ><i class="el-icon-s-operation"></i>基本资料</el-menu-item
-          >
-          <el-menu-item index="1-2"
-            ><i class="el-icon-camera"></i>更换头像</el-menu-item
-          >
-          <el-menu-item index="1-3"
-            ><i class="el-icon-key"></i>重置密码</el-menu-item
-          >
+            <el-menu-item index="/userinfo"><i class="el-icon-s-operation"></i>基本资料</el-menu-item>
+            <el-menu-item index="/changeavatar"><i class="el-icon-camera"></i>更换头像</el-menu-item>
+            <el-menu-item index="/resetpwd"><i class="el-icon-key"></i>重置密码</el-menu-item>
         </el-submenu>
-        <el-menu-item index="2">
+        <el-menu-item @click="logout">
           <i class="el-icon-switch-button"></i> 退出</el-menu-item
         >
       </el-menu>
@@ -70,28 +65,30 @@
           el-menu属性
           1.default-active 设置激活 高亮 给string
           2.unique-opened 保持只有一个子菜单展开  布尔型属性值 只要设置了 就是true
+          3. router 一旦开启 就会使用 vuerouter模式
          -->
         <el-menu
-          :default-active="'1'"
+          :default-active="$route.path"
           class="el-menu-vertical-demo"
           background-color="#24262d"
           text-color="#fff"
           active-text-color="#579ef8"
           :unique-opened="true"
+          router
         >
-          <el-menu-item index="1">
+          <el-menu-item index="/">
             <i class="el-icon-s-home"></i>
-            <span slot="title">首页</span>
+            <span slot="title">主页</span>
           </el-menu-item>
           <el-submenu index="2">
             <template slot="title">
               <i class="el-icon-s-order"></i>
               <span>文章管理</span>
             </template>
-            <el-menu-item index="2-1"
+            <el-menu-item index="/artcategory"
               ><i class="el-icon-s-data"></i>文章分类</el-menu-item
             >
-            <el-menu-item index="2-2"
+            <el-menu-item index="/artlist"
               ><i class="el-icon-document-copy"></i>文章列表</el-menu-item
             >
           </el-submenu>
@@ -100,19 +97,22 @@
               <i class="el-icon-user-solid"></i>
               <span>个人中心</span>
             </template>
-            <el-menu-item index="3-1"
+            <el-menu-item index="/userinfo"
               ><i class="el-icon-s-operation"></i>基本资料</el-menu-item
             >
-            <el-menu-item index="3-2"
+            <el-menu-item index="/changeavatar"
               ><i class="el-icon-camera"></i>更换头像</el-menu-item
             >
-            <el-menu-item index="3-3"
+            <el-menu-item index="/resetpwd"
               ><i class="el-icon-key"></i>重置密码</el-menu-item
             >
           </el-submenu>
         </el-menu>
       </el-aside>
-      <el-main style="background: teal">Main</el-main>
+      <el-main>
+        <!-- 二级路由出口 -->
+      <router-view></router-view>
+      </el-main>
     </el-container>
   </el-container>
 </template>
@@ -133,7 +133,23 @@ export default {
     this.getUserInfo()
   },
   methods: {
-    ...mapActions('user', ['getUserInfo'])
+    ...mapActions('user', ['getUserInfo']),
+    logout () {
+      // 1. 先让用户自己确认是否退出
+      this.$confirm('真的要退出吗？', '温馨提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        // 确认 跳转登陆页并且清楚 token
+        this.$message.success('成功退出')
+        this.$router.push('/login')
+        localStorage.removeItem('token')
+      }).catch(() => {
+        // 取消
+        this.$message.info('已取消操作')
+      })
+    }
   },
   computed: {
     ...mapState('user', ['userInfo']),

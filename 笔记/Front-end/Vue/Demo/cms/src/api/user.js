@@ -16,9 +16,9 @@ export const reqReg = (data) => {
 // 用于获取用户基本资料
 export const reqGetUserInfo = () => http({
   method: 'get',
-  url: '/my/userinfo',
+  url: '/my/userinfo'
   // 单独设置请求头
-  headers: {
-    Authorization: localStorage.getItem('token')
-  }
+  // headers: {
+  //   Authorization: localStorage.getItem('token')
+  // }
 })

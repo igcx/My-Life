@@ -278,35 +278,317 @@ import '@/utils/element.js'
 
 2. 重启项目 项目一定在根目录vscode中打开
 
-## 路由配置
+## 登录和注册功能
 
-## 登录功能
+### 创建组件 配置路由
 
-获取登录表单数据 el-form 添加 :model='表单整体数据'
+1. 创建组件 `views/Login/index.vue`
 
-添加校验规则 el-form-item 添加prop
+    ``` vue
+    <template>
+      <div class="login">登录页面</div>
+    </template>
 
-注册点击按钮
+    <script>
+    export default {
+      name: 'Login'
+    }
+    </script>
 
-1. 表单的整体校验 validate 必须写成箭头函数 让this指向组件实例
-2. 发请求（axios）并且保存token 成功或失败（提示用户）
-3. 跳转到后台页面
+    <style>
 
+    </style>
+    ```
 
+2. 配置路由 `router/index.js`
 
-封装 axios 到 utils文件夹下
+    ``` js
+    import Vue from 'vue'
+    import VueRouter from 'vue-router'
+    import Login from '@/views/Login'
 
+    Vue.use(VueRouter)
 
+    const router = new VueRouter({
+      routes: [
+        { path: '/login', component: Login }
+      ]
+    })
 
-拦截器 
+    export default router
+    ```
+
+#### 实现页面布局
+
+- 注册表单的组件
+
+``` vue
+<template>
+  <div class="login-container">
+    <!-- 头部的 logo 区域 -->
+    <div class="header">
+      <img src="@/assets/images/logo.png" alt="" />
+    </div>
+
+    <!-- 登录和注册区域 -->
+    <div class="box">
+      <div class="box-header"></div>
+      <!-- 登录的表单 -->
+      <el-form ref="form" :model="loginForm" :rules="rules">
+        <el-form-item prop="username">
+          <el-input v-model="loginForm.username" prefix-icon="el-icon-user" placeholder="请输入你的用户名"></el-input>
+        </el-form-item>
+        <el-form-item prop="password">
+          <el-input v-model="loginForm.password" prefix-icon="el-icon-lock" type="password" placeholder="请输入你的密码"></el-input>
+        </el-form-item>
+
+        <el-button type="primary" class="btn-login">登录</el-button>
+        <el-link type="info" class="link-reg">去注册账号</el-link>
+      </el-form>
+    </div>
+  </div>
+</template>
+<style lang="less" scoped>
+.login-container {
+  background-color: blue;
+  height: 100%;
+  background: url('~@/assets/images/login_bg.jpg') no-repeat center;
+  background-size: cover;
+
+  .header {
+    width: 1200px;
+    margin: 0 auto;
+    user-select: none;
+  }
+
+  .box {
+    width: 400px;
+    height: 270px;
+    background-color: #fff;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 3px;
+    box-shadow: 0 1px 15px rgba(0, 0, 0, 0.2);
+    padding: 0 30px;
+    box-sizing: border-box;
+
+    .box-header {
+      height: 60px;
+      background: url('~@/assets/images/login_title.png') no-repeat center;
+    }
+
+    .btn-login {
+      width: 100%;
+    }
+
+    .link-reg {
+      font-size: 12px;
+      margin-top: 10px;
+    }
+  }
+}
+</style>
+```
+
+- 在`App.vue`中设置样式 实现背景图完整展示
+
+``` vue
+<template>
+  <div id="app">
+    <router-view></router-view>
+  </div>
+</template>
+
+<style lang="less">
+#app {
+  height: 100%;
+}
+</style>
+```
+
+#### 实现表单预校验
+
+- 为form绑定model属性
+- 为form绑定rules,并定义规则
+- 为form-item绑定prop
+- 为表单元素绑定v-model
+
+``` js
+<script>
+export default {
+  name: 'Login',
+  data () {
+    return {
+      loginForm: {
+        username: '',
+        password: ''
+      },
+      rules: {
+        username: [
+          { required: true, message: '请输入你的用户名', trigger: ['blur', 'change'] },
+          { pattern: /^[0-9a-zA-Z]{1,10}$/, message: '用户名必须是字母数字,长度1-10', trigger: ['blur', 'change'] }
+        ],
+        password: [
+          { required: true, message: '请输入你的密码', trigger: ['blur', 'change'] },
+          { pattern: /^\S{6,15}$/, message: '密码必须是非空字符串,长度6-15', trigger: ['blur', 'change'] }
+        ]
+      }
+    }
+  }
+}
+</script>
+```
+
+#### 发送请求的表单预校验
+
+- 必须是箭头函数(让this指向组件)
+
+``` js
+login () {
+  this.$refs.form.validate((flag) => {
+    if (flag) {
+      console.log('请求啦')
+    }
+  })
+}
+```
+
+#### 测试发送登录请求
+
+`yarn add axios`
+
+``` js
+import axios from 'axios'
+
+login () {
+  this.$refs.form.validate(async (flag) => {
+    if (flag) {
+      // console.log('请求啦')
+      const { data } = await axios({
+        method: 'post',
+        url: 'http://www.liulongbin.top:3008/api/login',
+        data: this.loginForm
+      })
+      if (data.code !== 0) {
+        return console.log('登录失败')
+      }
+      console.log(data, '登录成功')
+    }
+  })
+}
+```
+
+#### 登录完成
+
+需要做的事情:
+
+1. 导入axios
+2. 点击登录按钮发送登录的请求
+3. 登录成功后或者登录失败都要提示用户 **[需要全局注册 $message](https://element.eleme.io/#/zh-CN/component/message)**
+4. 存储登录成功后的token,`因为后续的api都需要携带token`
+5. 跳转到首页
+
+`element.js`
+
+``` js
+import Vue from 'vue'
+
+// 按需导入
+import { Button, Form, FormItem, Input, Link, Message } from 'element-ui'
+// 注册
+Vue
+  .use(Button)
+  .use(Form)
+  .use(FormItem)
+  .use(Input)
+  .use(Link)
+
+// Message消息提示组件将来不是复制结构使用, 而是通过函数调用, 所以需要挂载到Vue原型上
+Vue.prototype.$message = Message
+```
+
+`Login.vue`
+
+``` js
+login () {
+  this.$refs.form.validate(async (flag) => {
+    if (flag) {
+      // console.log('请求啦')
+      const { data } = await axios({
+        method: 'post',
+        url: 'http://www.liulongbin.top:3008/api/login',
+        data: this.loginForm
+      })
+      if (data.code !== 0) {
+        return this.$message.error('登录失败')
+      }
+      // 登录成功，提示用户，保存 token，跳转到后台主页
+      this.$message.success('登录成功')
+      localStorage.setItem('big-token', data.token)
+      this.$router.push('/')
+    }
+  })
+}
+```
+
+## axios封装
+
+- 我们刚才测试了登录功能可以正确的返回数据,但是我们如果再发送多次请求,我们`需要在每个页面导入axios`,`并且需要写完整的地址去发送请求`,**如果有一天基地址变更了**呢?那我们需要逐个去修改每个请求地址, 所以我们正确的解决方案是抽离模块, 单独封装axios
+`utils/request.js`
+
+``` js
+// 导入 axios
+import axios from 'axios'
+import Vue from 'vue'
+// 全局挂载axios
+axios.defaults.baseURL = 'http://www.liulongbin.top:3008'
+// 导出axios
+export default axios 
+```
+
+- 将request.js在`main.js`中导入
+
+```js
+import http from  '@/utils/request'
+// 把 axios 挂载到 Vue 上
+Vue.prototype.$http = http
+```
+
+- 改造登录的请求
+
+```js
+methods: {
+    // 登录
+    login() {
+      this.$refs.loginFormRef.validate(async flag => {
+        if (!flag) return
+        const { data } = await this.$http({
+          method: 'post',
+          url: '/api/login',
+          data: this.loginForm
+        })
+        if (data.code !== 0) {
+          return this.$message.error('登录失败！')
+        }
+        // 登录成功，提示用户，保存 token，跳转到后台主页
+        this.$message.success('登录成功！')
+        localStorage.setItem('token', data.token)
+        this.$router.push('/')
+      })
+    }
+  }
+```
+
+### 拦截器
 
 - 请求到达服务端之前 经过请求拦截器（统一给请求去添加一下东西 请求头）
 - 响应的数据真正回到客户端之前 经过响应拦截器（统一处理数据 ==> 脱掉一层）
 
-
-
 优化：网络较慢的时候用户频繁点击登录按钮会重复发起请求 ==> 解决 全局加上loading效果 或者 点击一次之后禁用按钮
 
+全局加上loading效果
 
 
 封装登录api接口
