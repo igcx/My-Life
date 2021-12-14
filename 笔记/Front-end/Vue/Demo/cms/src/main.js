@@ -13,11 +13,18 @@ import store from './store'
 // 入口文件进行统一的导入 element.js 模块
 import '@/utils/element.js'
 
+// 导入 dayjs
+import dayjs from 'dayjs'
 // 引入全局样式
 // 使用 vue-cli 脚手架创建项目的时候会默认有一个src的别名 @ 等同于 src
 // @ 默认是没有路径提示的, 需要在根目录下新建 jsconfig.json 自己配置
 // vue 中的 @ 别名 在样式中默认是不识别的，如果需要让他识别，在他前面加 ~
 import '@/styles/global.css'
+
+// 定义格式化时间的过滤器
+Vue.filter('dateFormat', (time) => {
+  return dayjs(time).format('YYYY-MM-DD HH:mm:ss')
+})
 
 Vue.config.productionTip = false
 

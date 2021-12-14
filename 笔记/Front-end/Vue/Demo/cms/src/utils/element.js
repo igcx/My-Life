@@ -22,7 +22,13 @@ import {
   Breadcrumb,
   BreadcrumbItem,
   Row,
-  Col
+  Col,
+  Table,
+  TableColumn,
+  Dialog,
+  Select,
+  Option,
+  Pagination
 } from 'element-ui'
 
 // 组件的注册
@@ -43,6 +49,12 @@ Vue.use(Button)
   .use(BreadcrumbItem)
   .use(Row)
   .use(Col)
+  .use(Table)
+  .use(TableColumn)
+  .use(Dialog)
+  .use(Select)
+  .use(Option)
+  .use(Pagination)
 
 // 退出弹框
 Vue.prototype.$confirm = MessageBox.confirm
