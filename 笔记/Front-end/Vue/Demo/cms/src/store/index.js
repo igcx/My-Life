@@ -7,9 +7,10 @@ import article from './modules/article'
 
 Vue.use(Vuex)
 
+// 默认导出
 export default new Vuex.Store({
   modules: {
     user,
-    article
+    article: article
   }
 })

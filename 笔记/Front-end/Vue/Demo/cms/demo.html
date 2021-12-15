@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>前端本地预览</title>
+</head>
+<body>
+  <!-- 
+    图片预览的正常流程(经过服务器): 
+    选择图片 => 发送给服务端 => 后端会响应给你一个网路路径 => 拿到网络路径 直接给img 的src属性
+
+    前端自己完成本地预览!!!
+    URL.createObjectURL(文件对象)  => 得到一个临时的路径
+  -->
+  <input type="file" name="" id="">
+  <!-- 用户只要上传文件了, 就会触发change -->
+  <img src="" alt="">
+  <script>
+    const inp = document.querySelector('input')
+    const img = document.querySelector('img')
+
+    inp.addEventListener('change', (e) => {
+      // console.log('有文件上传');
+      // e.target.files => 上传的文件列表
+      // console.log(e.target.files);
+      // e.target.files[0] => 上传的文件对象
+      // console.log(e.target.files[0]);
+      const file = e.target.files[0]
+
+      // 需求: 希望前端自己本地预览 => 需要得到一个路径
+      // h5提供了URL.createObjectURL(文件对象) => 返回一个临时路径
+      const tempPath = URL.createObjectURL(file)
+      console.log(tempPath);
+      img.src = tempPath
+
+      // 路径是临时的!!!  过期的 只要创建这个临时路径的页面关闭了, 就过期了
+
+    })
+  </script>
+</body>
+</html>

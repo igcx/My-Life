@@ -2,7 +2,7 @@
   <div class="reg-container">
     <!-- 头部的 logo 区域 -->
     <div class="header">
-      <!-- <img src="@/assets/images/logo.png" alt="" /> -->
+      <img src="@/assets/images/logo.png" alt="" />
     </div>
 
     <!-- 登录和注册区域 -->
@@ -27,7 +27,7 @@
         </el-form-item>
 
         <el-button type="primary" class="btn-login" @click="register">注册</el-button>
-        <el-link type="info" class="link-reg" @click="$router.push('/login')">去登录账号</el-link>
+        <el-link type="info" class="link-reg" @click="$router.push('/login')">去登录</el-link>
       </el-form>
     </div>
   </div>
@@ -37,6 +37,9 @@ import { reqReg } from '@/api/user'
 export default {
   name: 'Reg',
   data () {
+    // let a = 1
+    // let b = 2
+
     const checkRePass = (rule, value, callback) => {
       if (value === this.regForm.password) {
         callback()
@@ -141,7 +144,6 @@ export default {
 
     .link-reg {
       font-size: 12px;
-      margin-top: 10px;
     }
   }
 }

@@ -28,7 +28,9 @@ import {
   Dialog,
   Select,
   Option,
-  Pagination
+  Pagination,
+  Divider,
+  Footer
 } from 'element-ui'
 
 // 组件的注册
@@ -55,13 +57,14 @@ Vue.use(Button)
   .use(Select)
   .use(Option)
   .use(Pagination)
+  .use(Divider)
+  .use(Footer)
+  // .use(MenuItemGroup)
+  // .use(Message)
 
-// 退出弹框
-Vue.prototype.$confirm = MessageBox.confirm
-// 消息提示
 Vue.prototype.$message = Message
-// 加载效果
 Vue.prototype.$loading = Loading.service
+Vue.prototype.$confirm = MessageBox.confirm
 
 // 组件库的使用方式:
 // 1. 直接复制组件结构  =>  导入+use
