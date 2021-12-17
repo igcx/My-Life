@@ -37,41 +37,65 @@
 
 ## 回调函数的嵌套问题演示
 
-需求:  按照顺序依次读取 - a, b, c, d 四个文件
-
 回调地狱: 回调函数嵌套回调函数, 嵌套多了, 将来就很难维护, 很难理清顺序
 
-```jsx
+```js
 // 回调函数的嵌套问题演示
-// 需求: 依次读取 a b c d 四个文件, 依次按顺序打印结果
-// 导入fs模块
-import fs from 'fs'
+    // 需求1: 2s 之后，打印 'ls'
+    // setTimeout(() => {
+    //   console.log('ls')
+    // }, 2000)
 
-// fs.readFile(路径, 'utf8', (err, data) => { ... })
-fs.readFile('a.txt', 'utf8', (err, data) => {
-  if (err) return console.log(err)
-  console.log(data)
+    //  需求2: 两秒以后, 打印一个zs => 封装成一个函数
+    // function fn() {
+    //   setTimeout(() => {
+    //     console.log('zs')
+    //   }, 2000)
+    // }
+    // fn()
 
-  fs.readFile('b.txt', 'utf8', (err, data) => {
-    if (err) return console.log(err)
-    console.log(data)
+    //  需求3: 两秒以后, 打印一个zs => 封装成一个函数(具体做什么事 不写死)
+    // function fn(callback) {
+    //   setTimeout(() => {
+    //     // 具体做啥 不能写死, 传啥做啥 => 回调函数
+    //     // console.log('zs')
+    //     callback()
+    //   }, 2000)
+    // }
+    // fn(function() {
+    //   console.log('zs')
+    // })
 
-    fs.readFile('c.txt', 'utf8', (err, data) => {
-      if (err) return console.log(err)
-      console.log(data)
+    // fn(function() {
+    //   console.log('ls')
+    // })
 
-      fs.readFile('d.txt', 'utf8', (err, data) => {
-        if (err) return console.log(err)
-        console.log(data)
+    // fn(function() {
+    //   console.log('ww')
+    // })
+
+    // 需求4: 等2s 打印zs  再等2s 打印ls 再等2s 打印ww
+    function fn(callback) {
+      setTimeout(() => {
+        callback()
+      }, 2000)
+    }
+    fn(function() {
+      console.log('zs')
+
+      fn(function() {
+        console.log('ls')
+
+        fn(function() {
+          console.log('ww')
+        })
       })
     })
-  })
-})
 ```
 
 ## promise的基本语法
 
-目的: promise 是书写异步代码的另一种方式, 解决回调函数嵌套的问题
+目的: promise 是书写异步代码的另一种方式, 是异步编程的一种解决方案, 解决回调函数嵌套的问题
 
 1. 如何创建一个 promise 对象
 
@@ -151,33 +175,29 @@ p.then(res => {
 
 ## promise 解决回调地狱优化
 
-```jsx
-function read (filename) {
-  return new Promise(function (resolve, reject) {
-    fs.readFile(filename, 'utf8', (err, data) => {
-      if (err) {
-        reject(err)
-      } else {
-        resolve(data)
-      }
+```js
+  // 需求4: 等2s 打印zs  再等2s 打印ls 再等2s 打印ww
+  function fn() {
+    return new Promise((resolve, reject) => {
+      // 封装异步操作
+      setTimeout(() => {
+        resolve()
+      }, 2000)
     })
-  })
-}
+  }
 
-read('a.txt').then(res => {
-  console.log(res)
-  return read('b.txt')
-}).then(res => {
-  console.log(res)
-  return read('c.txt')
-}).then(res => {
-  console.log(res)
-  return read('d.txt')
-}).then(res => {
-  console.log(res)
-}).catch(err => {
-  console.log(err)
-})
+  fn().then(() => {
+    console.log('zs')
+    // 相当于又等了 2s
+    return fn()
+  }).then(() => {
+    console.log('ls')
+    return fn()
+  }).then(() => {
+    console.log('ww')
+  }).catch((err) => {
+    console.log(err)
+  })
 ```
 
 在 Promise 的链式操作中如果发生了错误，可以使用 .catch 方法进行捕获和处理
@@ -195,3 +215,21 @@ read('a.txt').then(res => {
   Promise.race() 方法会发起并行的 Promise 异步操作，只要任何一个异步操作完成，
 
   就立即执行下一步的 .then 操作（**赛跑机制**）
+
+async/await
+
+``` js
+  // async await 语法糖(简写形式)
+  async function test() {
+    await fn()
+    console.log('zs')
+
+    await fn()
+    console.log('ls')
+
+    await fn()
+    console.log('ww')
+  }
+
+  test()
+```
