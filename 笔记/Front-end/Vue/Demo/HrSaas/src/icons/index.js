@@ -27,7 +27,7 @@ Vue.component('svg-icon', SvgIcon)
 const req = require.context('./svg', false, /\.svg$/)
 // 固定语法, 用于获取需要查找的文件路径
 // ['./dashboard.svg', './example.svg', './eye-open.svg', './eye.svg', './form.svg', './link.svg', './nested.svg', './password.svg', './table.svg', './tree.svg', './user.svg']
-console.log(req.keys(), 8877)
+// console.log(req.keys(), 8877)
 
 // 这个函数的作用就是 根据提供好的查找的文件路径, 统一的导入
 const requireAll = (requireContext) => {

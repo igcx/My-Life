@@ -1,7 +1,7 @@
 module.exports = {
 
   // 设置html网页的标题(重启项目)
-  title: '这是一个网页标题',
+  title: 'HrSaas管理系统',
 
   /**
    * @type {boolean} true | false

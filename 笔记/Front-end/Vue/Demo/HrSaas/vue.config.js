@@ -29,12 +29,33 @@ module.exports = {
   assetsDir: 'static',
   lintOnSave: process.env.NODE_ENV === 'development',
   productionSourceMap: false,
+  // 开发服务器上配置代理服务器
   devServer: {
     port: port,
     open: true,
     overlay: {
       warnings: false,
       errors: true
+    },
+    // 配置代理
+    proxy: {
+      // 开启了一个代理,将来如果有包含/api的请求，会代理转发
+      // 可以配多个代理
+      '/api': {
+        // 目标: '后端服务器真正的地址'
+
+        target: 'http://ihrm-java.itheima.net' // 线上的接口
+
+        // 本地接口（需要部署） mongodb
+        // target: 'http://localhost:3000'
+
+        // 以下配置不是必须的
+        // 设置路径重写 代理标记就会被换成 ''
+        //   pathRewrite: {
+        //     '^/api': ''
+        // }
+      }
+      // before: require('./mock/mock-server.js')
     }
     // before: require('./mock/mock-server.js')
   },
@@ -87,7 +108,7 @@ module.exports = {
             .plugin('ScriptExtHtmlWebpackPlugin')
             .after('html')
             .use('script-ext-html-webpack-plugin', [{
-            // `runtime` must same as runtimeChunk name. default is `runtime`
+              // `runtime` must same as runtimeChunk name. default is `runtime`
               inline: /runtime\..*\.js$/
             }])
             .end()

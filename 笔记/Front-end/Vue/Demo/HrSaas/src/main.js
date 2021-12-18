@@ -27,6 +27,12 @@ import '@/icons' // icon
 // 导入js文件 并且直接执行
 import '@/permission'
 
+// 导入 http 模块
+// import http from '@/utils/request'
+
+// 挂载到 vue 原型
+// Vue.prototype.$http = http
+
 // 有后端接口, 不需要mock: 1.main.js相关代码 2.mock文件夹 3.vue.config.js 39行 => 重启
 // if (process.env.NODE_ENV === 'production') {
 //   const { mockXHR } = require('../mock')

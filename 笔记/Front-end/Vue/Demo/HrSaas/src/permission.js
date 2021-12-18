@@ -1,5 +1,40 @@
 // 这个文件专门用于添加路由前置守卫
 // 登录访问控制? 登录了才能看哪些页面
+
+import router from '@/router'
+import store from '@/store'
+
+// 判断有无 token
+// 1. 有 token
+//  1.1 判断是不是去登陆页 如果去登录页 没有必要去登录 引导去首页
+//  1.2 不是登陆页，直接放行
+
+// 2. 没有 token
+//  2.1 去的白名单（'/login', '/404'） 直接放行
+//  2.2 去的不是白名单，去登录页
+
+// 白名单
+const WHITE_LIST = ['/login', '/404']
+
+router.beforeEach((to, from, next) => {
+  if (store.getters.token) {
+    if (to.path === '/login') {
+      next('/')
+    } else {
+      next()
+    }
+  } else {
+    // 没有 token
+    if (WHITE_LIST.includes(to.path)) {
+      // 去的是白名单
+      next()
+    } else {
+      // 去的是重要的地方 需要登录
+      next('/login')
+    }
+  }
+})
+
 // 白名单 => whilelist = ['/login', '/reg'] =>不需要登录也能访问的页面
 // 如果去的是白名单 , 直接放行
 // 如果去的不是白名单   有token 直接放行;  没有token 拦截走登录
