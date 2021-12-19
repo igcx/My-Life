@@ -4,6 +4,10 @@
 import router from '@/router'
 import store from '@/store'
 
+// 希望进入页面有一个进度条 NProgress
+import NProgress from 'nprogress' // 引入一份进度条插件
+import 'nprogress/nprogress.css' // 引入进度条样式
+
 // 判断有无 token
 // 1. 有 token
 //  1.1 判断是不是去登陆页 如果去登录页 没有必要去登录 引导去首页
@@ -16,98 +20,46 @@ import store from '@/store'
 // 白名单
 const WHITE_LIST = ['/login', '/404']
 
-router.beforeEach((to, from, next) => {
+// 导航前置守卫
+router.beforeEach(async(to, from, next) => {
+  // 不论哪个页面进入都会经过前置守卫，开启进度条
+  NProgress.start()
+  // 判断有无token
   if (store.getters.token) {
+    // 判断去的是不是登录页
     if (to.path === '/login') {
+      // 跳到首页
       next('/')
+      NProgress.done()
     } else {
+      // 进入页面之前，先看这个人的权限
+      // 只有获取到了用户的权限，才能放行
+      // 异步的函数(封装promise)
+
+      // 只有在仓库里没有用户资料，这个时候可以发请求
+      if (!store.state.user.userInfo.userId) {
+        const res = await store.dispatch('user/getUserProfile')
+        console.log(res)
+      }
       next()
     }
   } else {
     // 没有 token
+    // 看在不在白名单中(免登陆即可访问的页面)
     if (WHITE_LIST.includes(to.path)) {
       // 去的是白名单
       next()
     } else {
       // 去的是重要的地方 需要登录
       next('/login')
+      NProgress.done()
     }
   }
 })
-
-// 白名单 => whilelist = ['/login', '/reg'] =>不需要登录也能访问的页面
-// 如果去的是白名单 , 直接放行
-// 如果去的不是白名单   有token 直接放行;  没有token 拦截走登录
-
-// import router from './router'
-// import store from './store'
-// import { Message } from 'element-ui'
-// import NProgress from 'nprogress' // progress bar
-// import 'nprogress/nprogress.css' // progress bar style
-// import { getToken } from '@/utils/auth' // get token from cookie
-// import getPageTitle from '@/utils/get-page-title'
-
-// NProgress.configure({ showSpinner: false }) // NProgress Configuration
-
-// // 设置了 白名单 => 不需要验证token也能访问的(不重要的)
-// // 一级路由 login 404 layout(...)
-// const whiteList = ['/login', '/404']
-
-// // 前置守卫: 路由被匹配成功以后, 对应的页面组件展示在浏览器之前, 经过前置守卫
-// // 只有前置守卫放行了( next() ), 页面组件才会展示在我们面前
-// router.beforeEach(async(to, from, next) => {
-//   // start progress bar
-//   NProgress.start()
-
-//   // set page title
-//   document.title = getPageTitle(to.meta.title)
-
-//   // determine whether the user has logged in
-//   // 这个函数用于判断用户有无token
-//   const hasToken = getToken()
-
-//   if (hasToken) {
-//     // 有token => 直接放行 (优化点 判断一下他去的是登录页么)
-//     if (to.path === '/login') {
-//       // 要去登录页 且登陆过 没必要 => 引导到首页
-//       next({ path: '/' })
-//       NProgress.done()
-//     } else {
-//       // 表示去的不是登录页, 直接放行
-//       const hasGetUserInfo = store.getters.name
-//       if (hasGetUserInfo) {
-//         next()
-//       } else {
-//         try {
-//           // get user info
-//           await store.dispatch('user/getInfo')
-
-//           next()
-//         } catch (error) {
-//           // remove token and go to login page to re-login
-//           await store.dispatch('user/resetToken')
-//           Message.error(error || 'Has Error')
-//           next(`/login?redirect=${to.path}`)
-//           NProgress.done()
-//         }
-//       }
-//     }
-//   } else {
-//     // 没有token
-
-//     // 判断去的是否是白名单
-//     if (whiteList.includes(to.path)) {
-//       // 去的是白名单 => 可以去
-//       next()
-//     } else {
-//       // 去的不是白名单 且没有token , 不能去 => 拦截走登录页
-//       next(`/login?redirect=${to.path}`)
-//       NProgress.done()
-//     }
-//   }
-// })
-
-// router.afterEach(() => {
-//   // finish progress bar
-//   NProgress.done()
-// })
+// 路由后置守卫
+// 只要进入到页面中，会经过后置守卫
+// 将来如果是被拦截走的页面，是没有真正进入到页面中，所以就不会触发后置守卫
+// 解决：找到被拦截走的页面，手动关闭进度条
+router.afterEach((to, from) => {
+  NProgress.done()
+})

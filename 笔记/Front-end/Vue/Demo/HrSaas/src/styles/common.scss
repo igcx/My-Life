@@ -562,3 +562,8 @@
   .hr-block {
     margin: 10px 0;
   }
+  // 进度条
+  #nprogress .bar {
+    background-color: greenyellow!important;
+    // height: 1px!important;
+  }

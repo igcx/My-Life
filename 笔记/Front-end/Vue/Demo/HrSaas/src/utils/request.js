@@ -1,3 +1,4 @@
+import store from '@/store'
 import axios from 'axios'
 import { Message } from 'element-ui'
 
@@ -12,6 +13,12 @@ const http = axios.create({
 // 添加请求拦截器
 http.interceptors.request.use(function(config) {
   // 在发送请求之前做些什么
+  // 拦截器统一携带token
+  const token = store.getters.token
+  if (token) {
+    // 如果token存在 注入token
+    config.headers.Authorization = `Bearer ${token}`
+  }
   return config
 }, function(error) {
   // 对请求错误做些什么
@@ -28,6 +35,8 @@ http.interceptors.response.use(function(response) {
   // console.log(res)
   const { success, message } = res
   if (!success) {
+    // 统一处理请求成功但是结果失败的消息提示
+    Message.error(message)
     return Promise.reject(new Error(message))
   }
 

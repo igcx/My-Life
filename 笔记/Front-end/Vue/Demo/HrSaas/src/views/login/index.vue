@@ -166,7 +166,7 @@ export default {
         }).catch(() => {
           // 请求失败的回调
           // 提示
-          this.$message.error('登录失败')
+          // this.$message.error('登录失败')
           // 请求失败 关闭 loading
           // this.loading = false
         }).finally(() => {
