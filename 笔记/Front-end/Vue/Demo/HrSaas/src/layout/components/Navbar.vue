@@ -65,7 +65,7 @@ export default {
     toggleSideBar() {
       this.$store.dispatch('app/toggleSideBar')
     },
-    async logout() {
+    logout() {
       // 清除信息
       this.$store.dispatch('user/logout')
       // 跳转到登录

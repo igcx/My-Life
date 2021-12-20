@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <!-- 
+    了解原理之前，首先抛出几个问题：
+      1. 什么是 svg ？
+      2. 为什么要用？
+        缩放不会失真
+        调整样式方便
+        加载效率高
+        使用方便(id标记)
+      3. 怎么用？
+      4. 解决了什么问题？
+    svg精灵图的原理及使用步骤：
+      1. symbol标签(元件) 可以用于包裹 icon，但是包裹了之后就不会展示图标，如果想展示必须再用svg标签包裹所有的 symbol
+        元件： 不会显示在页面中，可以包裹图标 icon
+
+      2. 使用 svg 雪碧图
+        在页面中任何位置，通过 use 根据id显示图标
+      
+   -->
+  <svg>
+    <symbol width="128" height="128" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 54.857h36.571V128H0V54.857zM91.429 27.43H128V128H91.429V27.429zM45.714 0h36.572v128H45.714V0z" />
+    </symbol>
+
+    <symbol width="128" height="96" xmlns="http://www.w3.org/2000/svg">
+      <path d="M64.125 56.975L120.188.912A12.476 12.476 0 0 0 115.5 0h-103c-1.588 0-3.113.3-4.513.838l56.138 56.137z" />
+      <path
+        d="M64.125 68.287l-62.3-62.3A12.42 12.42 0 0 0 0 12.5v71C0 90.4 5.6 96 12.5 96h103c6.9 0 12.5-5.6 12.5-12.5v-71a12.47 12.47 0 0 0-1.737-6.35L64.125 68.287z" />
+    </symbol>
+
+    <symbol id='one'width="128" height="128" xmlns="http://www.w3.org/2000/svg">
+      <path
+        d="M73.137 29.08h-9.209 29.7L63.886.093 34.373 29.08h20.49v27.035H27.238v17.948h27.625v27.133h18.274V74.063h27.41V56.115h-27.41V29.08zm-9.245 98.827l27.518-26.711H36.59l27.302 26.71zM.042 64.982l27.196 27.029V38.167L.042 64.982zm100.505-26.815V92.01l27.41-27.029-27.41-26.815z" />
+    </symbol>
+  </svg>
+  <!-- <svg>
+    <use xlink:href='#one'></use>
+  </svg> -->
+</body>
+
+</html>
