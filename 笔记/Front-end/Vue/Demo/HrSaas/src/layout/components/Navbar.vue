@@ -66,8 +66,10 @@ export default {
       this.$store.dispatch('app/toggleSideBar')
     },
     async logout() {
-      await this.$store.dispatch('user/logout')
-      this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+      // 清除信息
+      this.$store.dispatch('user/logout')
+      // 跳转到登录
+      this.$router.push('/login')
     }
   }
 }

@@ -5,7 +5,7 @@
 //  2. 让token变成响应式的 一旦变化 所有组件都知道
 
 import { reqLogin, reqGetProfile, reqGetUserDetailById } from '@/api/user'
-import { getToken, setToken } from '@/utils/auth'
+import { getToken, removeToken, setToken } from '@/utils/auth'
 
 const state = {
   // token 优先从 cookie 获取
@@ -19,9 +19,20 @@ const mutations = {
     // token 存到 cookie
     setToken(newToken)
   },
+  // 清除 token
+  removeToken(state) {
+    // 清除 仓库 token
+    state.token = ''
+    // 清除本地 token
+    removeToken()
+  },
   // 获取用户资料
   setUserInfo(state, newUserInfo) {
     state.userInfo = newUserInfo
+  },
+  // 清除个人信息
+  removeUserInfo(state) {
+    state.userInfo = {}
   }
 }
 const actions = {
@@ -68,7 +79,7 @@ const actions = {
     context.commit('setUserInfo', resObj)
     // async函数中 return xxx 相当于调用 resolve(xxx)
     return resObj
-  }
+  },
   // promise 写法
   // getUserProfile(context) {
   //   return new Promise((resolve, reject) => {
@@ -83,6 +94,12 @@ const actions = {
   //     })
   //   })
   // }
+  // 退出登录（提交 2 个 mutation）
+  // 异步封装操作也可以放同步的代码
+  logout(context) {
+    context.commit('removeToken')
+    context.commit('removeUserInfo')
+  }
 }
 const getters = {}
 

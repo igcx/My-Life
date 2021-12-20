@@ -1,3 +1,4 @@
+import router from '@/router'
 import store from '@/store'
 import axios from 'axios'
 import { Message } from 'element-ui'
@@ -42,10 +43,20 @@ http.interceptors.response.use(function(response) {
 
   return res
 }, function(error) {
+  console.dir(error)
+  if (error.response.status === 401 && error.response.data.code === 10002) {
+    // 表示登录过期了，401未授权
+    Message.error('您的登录已过期，请重新登录！')
+    // 到期清除token 清除个人信息
+    store.dispatch('user/logout')
+    // 跳转
+    router.push('/login')
+  } else {
+    Message.error(error.message)
+  }
   // 超出 2xx 范围的状态码都会触发该函数。
   // 对响应错误做点什么
   // 将来服务器错误提示用户
-  Message.error(error.message)
   return Promise.reject(error)
 })
 

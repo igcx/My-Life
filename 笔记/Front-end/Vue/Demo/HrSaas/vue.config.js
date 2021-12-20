@@ -48,6 +48,7 @@ module.exports = {
 
         // 本地接口（需要部署） mongodb
         // target: 'http://localhost:3000'
+        // target: 'http://192.168.141.65:3085'
 
         // 以下配置不是必须的
         // 设置路径重写 代理标记就会被换成 ''
