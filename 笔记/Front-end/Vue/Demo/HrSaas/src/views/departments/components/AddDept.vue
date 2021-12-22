@@ -32,7 +32,7 @@
     <!-- el-dialog有专门放置底部操作栏的 插槽  具名插槽 -->
     <div slot="footer">
       <el-button type="primary" size="small" @click="clickSubmit">确定</el-button>
-      <el-button size="small">取消</el-button>
+      <el-button size="small" @click="handleCloseDialog">取消</el-button>
     </div>
   </el-dialog>
 </template>
@@ -121,7 +121,14 @@ export default {
       // 关闭对话框
       // this.isShow = false
       // 子传父
-      this.$emit('closeDialog', false)
+      // 子组件不能直接去更新父组件的数据，通知父组件，让父组件自己改
+      // 还有一种方式 子组件通过一定的语法直接改
+      //    1. 需要父组件放权 .sync 相当于父组件给了子组件一个修改的权利
+      //    2. 子组件通过固定语法： this.$emit(update:props名称, 值)
+      this.$emit('update:is-show', false)
+
+      // 清空表单且重置错误提示 表单的 resetFields
+      this.$refs.form.resetFields()
     },
     async getSimpleUserList() {
       const { data } = await reqGetSimpleUserList()

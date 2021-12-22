@@ -47,8 +47,7 @@
       ref="addDept"
       :dept-list="deptList"
       :node-data="nodeData"
-      :is-show="isShow"
-      @closeDialog="closeDialogFn"
+      :is-show.sync="isShow"
       @add-dept="getDepartments"
     />
   </div>
@@ -90,7 +89,7 @@ export default {
     // 一旦调用这个函数, 自动发请求 获取最新的部门列表  渲染页面
     async getDepartments() {
       const { data: { depts, companyName }} = await reqGetDepartments()
-      // console.log(depts)
+      console.log(depts)
       // 保留一份原始的列表数据, 方便查找
       this.deptList = depts
       this.company.name = companyName
@@ -99,9 +98,6 @@ export default {
       // 先找一级部门  pid = ''
       // console.log(transList2TreeData(data.depts, ''), 99999)
       this.departs = transListToTreeData(depts, '')
-    },
-    closeDialogFn(flag) {
-      this.isShow = flag
     },
     openDialogFn(nodeData) {
       // 让弹窗显示
