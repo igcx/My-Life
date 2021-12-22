@@ -12,7 +12,7 @@ import ElementUI from 'element-ui'
 // 导入组件库样式
 import 'element-ui/lib/theme-chalk/index.css'
 // 导入一个语言包 英文包 用于中英切换
-import locale from 'element-ui/lib/locale/lang/en'
+// import locale from 'element-ui/lib/locale/lang/en'
 
 // 导入全局样式
 import '@/styles/index.scss'
@@ -40,9 +40,9 @@ Object.keys(directives).forEach(item => {
 })
 
 // 安装组件库 且英文包
-Vue.use(ElementUI, { locale })
+// Vue.use(ElementUI, { locale })
 // 如果想要中文版 element-ui，按如下方式声明
-// Vue.use(ElementUI)
+Vue.use(ElementUI)
 
 // 关闭生产提示
 Vue.config.productionTip = false

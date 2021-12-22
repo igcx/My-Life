@@ -31,3 +31,11 @@ export const reqGetUserDetailById = (id) => {
     url: `/sys/user/${id}`
   })
 }
+
+/**
+ * 获取员工简单列表
+ */
+export const reqGetSimpleUserList = () => request({
+  method: 'GET',
+  url: '/sys/user/simple'
+})

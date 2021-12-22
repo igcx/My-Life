@@ -115,3 +115,29 @@ export function param2Obj(url) {
   })
   return obj
 }
+
+// 2 two  to
+// 列表 => 树形数据
+// list => 原来的列表数据   value => 查找标记
+// 函数的作用: 在list数组中 去找value的部门
+export function transListToTreeData(list, value) {
+  const arr = []
+
+  list.forEach((item) => {
+    if (item.pid === value) {
+      // 找的是一级部门
+      // item => 财务部 => 二级部门   遍历list   找到里面pid===item.id
+      // 一定是拿着一级部门的id去查找  item.id
+      const result = transListToTreeData(list, item.id)
+      if (result.length > 0) {
+        // 如果找到了二级部门, 才去添加children
+        item.children = result
+      }
+      arr.push(item)
+    }
+  })
+
+  // ...
+
+  return arr
+}
