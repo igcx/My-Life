@@ -58,6 +58,8 @@ export default {
 
       if (str === 'edit') {
         console.log('编辑')
+        // 子传父 通知父组件
+        this.$emit('openEditDialog', this.nodeData)
       }
 
       if (str === 'del') {

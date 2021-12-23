@@ -2,7 +2,7 @@
   <div class="departments-container">
     <!-- app-container提供了内边距 -->
     <div class="app-container">
-      <el-card>
+      <el-card v-loading="loading">
         <!-- 一行  24分 -->
         <!-- root 表示是上面的结构, 不要编辑/删除 -->
         <TreeTools
@@ -34,6 +34,7 @@
               :node-data="data"
               @openDialog="openDialogFn"
               @del-dept="getDepartments"
+              @openEditDialog="openEditDialogFn"
             />
           </template>
         </el-tree>
@@ -79,7 +80,8 @@ export default {
         manager: '负责人'
       },
       isShow: false,
-      nodeData: {} // 为了以后新增部门 确定, 新增给谁做子部门
+      nodeData: {}, // 为了以后新增部门 确定, 新增给谁做子部门
+      loading: false
     }
   },
   created() {
@@ -88,6 +90,7 @@ export default {
   methods: {
     // 一旦调用这个函数, 自动发请求 获取最新的部门列表  渲染页面
     async getDepartments() {
+      this.loading = true
       const { data: { depts, companyName }} = await reqGetDepartments()
       console.log(depts)
       // 保留一份原始的列表数据, 方便查找
@@ -98,6 +101,7 @@ export default {
       // 先找一级部门  pid = ''
       // console.log(transList2TreeData(data.depts, ''), 99999)
       this.departs = transListToTreeData(depts, '')
+      this.loading = false
     },
     openDialogFn(nodeData) {
       // 让弹窗显示
@@ -108,7 +112,20 @@ export default {
       // getSimpleUserList 是子组件的方法
       // 父组件调用子组件的方法!!!  => 获取子组件实例 调用方法
       // this.$refs.form.validate
-      this.$refs.addDept.getSimpleUserList()
+      this.$nextTick(() => {
+        // this.$refs.addDept.getSimpleUserList()
+        // this.$refs.addDept.dialogTitle = '添加子部门'
+      })
+    },
+    openEditDialogFn(nodeData) {
+      this.nodeData = nodeData
+      this.isShow = true
+      // vue 是异步更新 DOM 的
+      this.$nextTick(() => {
+        // 页面更新之后，获取子组件，调用方法
+        // this.$refs.addDept.dialogTitle = '编辑部门'
+        this.$refs.addDept.getDepartDetail()
+      })
     }
   }
 }

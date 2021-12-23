@@ -14,7 +14,7 @@ export const reqGetDepartments = () => request({
  * 根据id删除部门
  * @param {*} id 部门id
  */
-export const reqDelDepartment = (id) => request({
+export const reqDelDepartment = id => request({
   method: 'DELETE',
   url: `/company/department/${id}`
 })
@@ -28,3 +28,23 @@ export const reqAddDepartment = data => request({
   url: '/company/department',
   data: data
 })
+
+/**
+ * 根据id查询部门详情
+ * @param {*} id 部门id
+ */
+export const reqGetDepartDetail = id => request({
+  method: 'GET',
+  url: `/company/department/${id}`
+})
+
+/**
+ * @param {*} form {id : name/code/introduce/manager}
+ */
+export const reqUpdateDepartDetail = form => {
+  return request({
+    method: 'PUT',
+    url: `/company/department/${form.id}`,
+    data: form
+  })
+}
