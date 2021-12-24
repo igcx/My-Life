@@ -1,19 +1,228 @@
 <template>
   <div class="setting-container">
+    <!-- 提供了一些默认的内边距 padding -->
     <div class="app-container">
-      <h2>
-        公司设置
-      </h2>
+      <el-card>
+        <el-tabs v-model="activeName">
+          <el-tab-pane label="角色管理" name="role">
+            <el-button
+              type="primary"
+              size="small"
+              @click="showDialog = true"
+            >+ 新增角色</el-button>
+            <el-dialog
+              :title="showTitle"
+              :visible="showDialog"
+              @close="closeDialog"
+            >
+              <el-form
+                ref="form"
+                :model="form"
+                :rules="rules"
+                label-width="100px"
+              >
+                <el-form-item label="角色名称" prop="name">
+                  <el-input v-model="form.name" placeholder="请输入角色名称" />
+                </el-form-item>
+                <el-form-item label="角色描述" prop="description">
+                  <el-input
+                    v-model="form.description"
+                    placeholder="请输入角色描述"
+                  />
+                </el-form-item>
+              </el-form>
+              <template #footer>
+                <el-button size="small" type="primary" @click="clickSubmit">确认</el-button>
+                <el-button size="small" @click="btnCancel">取消</el-button>
+              </template>
+            </el-dialog>
+            <!-- 表格 -->
+            <el-table v-loading="loading" :data="list">
+              <el-table-column
+                type="index"
+                label="序号"
+                :index="indexMethod"
+                width="120"
+              />
+              <el-table-column prop="name" label="角色名称" width="240" />
+              <el-table-column prop="description" label="描述" />
+              <el-table-column label="操作">
+                <template #default="{ row }">
+                  <el-button size="small" type="success">分配权限</el-button>
+                  <el-button size="small" type="primary" @click="edit(row.id)">编辑</el-button>
+                  <el-button
+                    size="small"
+                    type="danger"
+                    @click="del(row.id)"
+                  >删除</el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+            <!-- 分页组件 -->
+            <!--
+              属性:
+                1. current-page 标记当前页 (谁高亮)
+                2. page-sizes 可供选择的每页条数列表
+                3. page-size 起作用的每页条数
+                4. layout 布局, 控制是展示的控件列表布局
+                5. total 总条数
+              方法:
+                @size-change="handleSizeChange" 每页条数变化
+                @current-change="handleCurrentChange" 当前页变化
+            -->
+            <el-pagination
+              :current-page="page"
+              :page-sizes="[1, 2, 3, 4, 5]"
+              :page-size="pagesize"
+              layout="total, sizes, prev, pager, next, jumper"
+              :total="total"
+              @size-change="handleSizeChange"
+              @current-change="handleCurrentChange"
+            />
+          </el-tab-pane>
+          <el-tab-pane label="公司信息" name="company">公司内容</el-tab-pane>
+        </el-tabs>
+      </el-card>
     </div>
   </div>
 </template>
 
 <script>
+import { reqGetRoleList, reqDelRole, reqAddRole, reqGetRoleDetail, reqUpdateRole } from '@/api/setting'
 export default {
-  name: 'Setting'
+  name: 'Setting',
+  data() {
+    return {
+      activeName: 'role',
+      list: [],
+      page: 1, // 当前页
+      pagesize: 3, // 每页条数
+      total: 0, // 总条数
+      loading: false,
+      showDialog: false,
+      // 接口文档
+      form: {
+        name: '',
+        description: ''
+      },
+      rules: {
+        name: [
+          {
+            required: true,
+            message: '角色名称不能为空',
+            trigger: ['change', 'blur']
+          }
+        ],
+        description: [
+          {
+            required: true,
+            message: '角色描述不能为空',
+            trigger: ['change', 'blur']
+          }
+        ]
+      }
+    }
+  },
+  computed: {
+    showTitle() {
+      return this.form.id ? '编辑角色' : '添加角色'
+    }
+  },
+  created() {
+    this.getRoleList() // 获取角色列表
+  },
+  methods: {
+    async getRoleList() {
+      this.loading = true
+      const {
+        data: { total, rows }
+      } = await reqGetRoleList(this.page, this.pagesize)
+      // console.log(total, rows)
+      this.list = rows
+      this.total = total
+      this.loading = false
+    },
+    // 修改了每页条数后, 会造成页数的变化, 从第一页重新开始展示
+    handleSizeChange(val) {
+      // console.log(`每页 ${val} 条`)
+      // 更新每页条数
+      this.pagesize = val
+      // 重置当前页
+      this.page = 1
+      // 调用方法, 重新请求
+      this.getRoleList()
+    },
+    handleCurrentChange(val) {
+      // console.log(`当前页: ${val}`)
+      // 更新当前页
+      this.page = val
+      // 调用方法, 重新请求渲染
+      this.getRoleList()
+    },
+    // 配置自定义函数
+    indexMethod(index) {
+      // 处理序号问题
+      return index + 1 + this.pagesize * (this.page - 1)
+    },
+    // 取消 提示框
+    btnCancel() {
+      // console.log('取消')
+      this.showDialog = false
+    },
+
+    del(id) {
+      // console.log(id)
+      this.$confirm('确定删除该角色么？', '温馨提示')
+        .then(async() => {
+          await reqDelRole(id)
+          this.$message.success('删除角色成功')
+
+          if (this.list.length === 1 && this.page > 1) {
+            this.page--
+          }
+
+          this.getRoleList()
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    },
+    async edit(id) {
+      // console.log(id)
+      const { data } = await reqGetRoleDetail(id)
+      // console.log(res)
+      // 给 form表单赋值
+      this.form = data
+      this.showDialog = true
+    },
+    closeDialog() {
+      this.showDialog = false
+      // 重置表单 (数据+提示)
+      this.$refs.form.resetFields()
+      this.form = {
+        name: '',
+        description: ''
+      }
+    },
+
+    clickSubmit() {
+      this.$refs.form.validate(async(flag) => {
+        if (!flag) return
+        if (this.form.id) {
+          // 编辑
+          const res = await reqUpdateRole(this.form)
+          console.log(res)
+          this.$message.success('编辑角色成功')
+        } else {
+          // 添加
+          const res = await reqAddRole(this.form)
+          console.log(res)
+          this.$message.success('添加角色成功')
+        }
+        this.showDialog = false
+        this.getRoleList()
+      })
+    }
+  }
 }
 </script>
-
-<style>
-
-</style>

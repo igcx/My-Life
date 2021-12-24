@@ -91,6 +91,13 @@ export default {
     // 一旦调用这个函数, 自动发请求 获取最新的部门列表  渲染页面
     async getDepartments() {
       this.loading = true
+
+      // 演示loading效果
+      await new Promise((res, rej) => {
+        setTimeout(() => {
+          res()
+        }, 2000)
+      })
       const { data: { depts, companyName }} = await reqGetDepartments()
       console.log(depts)
       // 保留一份原始的列表数据, 方便查找
