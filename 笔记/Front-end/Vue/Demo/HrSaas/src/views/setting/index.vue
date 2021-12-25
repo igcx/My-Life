@@ -80,7 +80,30 @@
               @current-change="handleCurrentChange"
             />
           </el-tab-pane>
-          <el-tab-pane label="公司信息" name="company">公司内容</el-tab-pane>
+          <el-tab-pane label="公司信息" name="company">
+            <!-- 警告信息 -->
+            <el-alert
+              title="对公司名称、公司地址、营业执照、公司地区的更新，将使得公司资料被重新审核，请谨慎修改"
+              type="info"
+              show-icon
+              :closable="false"
+            />
+            <!-- 表单 -->
+            <el-form label-width="120px" style="margin-top:50px">
+              <el-form-item label="公司名称">
+                <el-input v-model="companyForm.name" disabled style="width:400px" />
+              </el-form-item>
+              <el-form-item label="公司地址">
+                <el-input v-model="companyForm.companyAddress" disabled style="width:400px" />
+              </el-form-item>
+              <el-form-item label="邮箱">
+                <el-input v-model="companyForm.mailbox" disabled style="width:400px" />
+              </el-form-item>
+              <el-form-item label="备注">
+                <el-input v-model="companyForm.remarks" type="textarea" :rows="3" disabled style="width:400px" />
+              </el-form-item>
+            </el-form>
+          </el-tab-pane>
         </el-tabs>
       </el-card>
     </div>
@@ -89,6 +112,8 @@
 
 <script>
 import { reqGetRoleList, reqDelRole, reqAddRole, reqGetRoleDetail, reqUpdateRole } from '@/api/setting'
+import { reqGetCompanyById } from '@/api/company'
+import { mapState } from 'vuex'
 export default {
   name: 'Setting',
   data() {
@@ -120,16 +145,24 @@ export default {
             trigger: ['change', 'blur']
           }
         ]
+      },
+      companyForm: {
+        name: '',
+        companyAddress: '',
+        mailbox: '',
+        remarks: ''
       }
     }
   },
   computed: {
+    ...mapState('user', ['userInfo']),
     showTitle() {
       return this.form.id ? '编辑角色' : '添加角色'
     }
   },
   created() {
     this.getRoleList() // 获取角色列表
+    this.getCompanyInfo() // 获取公司信息
   },
   methods: {
     async getRoleList() {
@@ -208,20 +241,26 @@ export default {
     clickSubmit() {
       this.$refs.form.validate(async(flag) => {
         if (!flag) return
+        let res
         if (this.form.id) {
           // 编辑
-          const res = await reqUpdateRole(this.form)
+          res = await reqUpdateRole(this.form)
           console.log(res)
-          this.$message.success('编辑角色成功')
+          // this.$message.success(res.message)
         } else {
           // 添加
-          const res = await reqAddRole(this.form)
+          res = await reqAddRole(this.form)
           console.log(res)
-          this.$message.success('添加角色成功')
         }
+        this.$message.success(res.message)
         this.showDialog = false
         this.getRoleList()
       })
+    },
+    async getCompanyInfo() {
+      const { data } = await reqGetCompanyById(this.userInfo.companyId)
+      this.companyForm = data
+      console.log(data)
     }
   }
 }
