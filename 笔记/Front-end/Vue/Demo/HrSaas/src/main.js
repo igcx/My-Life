@@ -27,6 +27,25 @@ import '@/icons' // icon
 // 导入js文件 并且直接执行
 import '@/permission'
 
+import components from '@/components/index'
+// components => 插件对象(install)
+// Vue.use() => components.install()
+Vue.use(components)
+
+// import { formatTime } from '@/filters'
+// Vue.filter('formatTime', formatTime)
+
+// 极端的场景: filters/index.js 文件中 封装了很多过滤器函数, 需要你帮我拿到所有过滤器函数 全局注册
+import * as filters from '@/filters'
+// console.log(filters);
+Object.keys(filters).forEach(key => {
+  Vue.filter(key, filters[key])
+})
+
+// 通用工具栏的组件结构
+import PageTools from '@/components/PageTools'
+Vue.component('PageTools', PageTools)
+
 // 导入自定义指令
 import * as directives from '@/directives'
 // 使用 for in 遍历对象
