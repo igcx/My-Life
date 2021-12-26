@@ -7,8 +7,8 @@
         </template>
 
         <template #right>
-          <el-button type="warning" size="small">excel导入</el-button>
-          <el-button type="danger" size="small">excel导出</el-button>
+          <el-button type="warning" size="small" @click="$router.push('/import?type=user')">excel导入</el-button>
+          <el-button type="danger" size="small" @click="handleDownload">excel导出</el-button>
           <el-button type="primary" size="small" @click="isShow = true">新增员工</el-button>
         </template>
       </PageTools>
@@ -71,6 +71,7 @@ import { reqDelEmployee, reqGetUserList } from '@/api/employee'
 // 默认导入
 import obj from '@/constant/employees'
 import AddEmployee from './components/AddEmployee.vue'
+import dayjs from 'dayjs'
 export default {
   name: 'Employees',
   components: {
@@ -148,6 +149,77 @@ export default {
       }).catch(() => {
         console.log('取消')
       })
+    },
+    async handleDownload() {
+      const headersArr = ['姓名', '手机号', '入职日期', '聘用形式', '转正日期', '工号', '部门']
+
+      // 中英文对照关系
+      const headersRelations = {
+        '姓名': 'username',
+        '手机号': 'mobile',
+        '入职日期': 'timeOfEntry',
+        '聘用形式': 'formOfEmployment',
+        '转正日期': 'correctionTime',
+        '工号': 'workNumber',
+        '部门': 'departmentName'
+      }
+      // 发请求 获取所有的员工数据 => 分页的接口
+      const { data: { rows }} = await reqGetUserList(1, this.total)
+      console.log(rows)
+
+      const resArr = this.transArrayTo2Wei(headersArr, headersRelations, rows)
+      console.log(resArr)
+
+      // 多表头配置
+      const multiHeader = [['姓名', '主要信息', '', '', '', '', '部门']]
+      // 合并单元格
+      const merges = ['A1:A2', 'B1:F1', 'G1:G2']
+      // 动态导入
+      import('@/vendor/Export2Excel').then(excel => {
+        // console.log(obj)
+        excel.export_json_to_excel({
+          // 表格的表头
+          header: headersArr,
+          // 表格的主体数据(固定格式->二维数组)
+          data: resArr,
+          filename: '员工信息表', // 文件名
+          autoWidth: true, // 宽度自适应 非必填
+          bookType: 'xlsx', // 文件格式 非必填
+          multiHeader,
+          merges
+        })
+      })
+    },
+    // 封装一个方法，处理成二维数组 [[],[],[],[]...]
+    transArrayTo2Wei(headersArr, headersRelations, rows) {
+      // console.log(headersArr, headersRelations, rows)
+      // rows.length 决定了有多少小数组
+      // headersArr 表头的长度决定了小数组有多少项
+      const res = []
+      rows.forEach(item => {
+        // item => 每一项用户信息
+        const arr = []
+
+        headersArr.forEach(key => {
+          // key => 中文键 转为 英文键
+          const englishKey = headersRelations[key]
+
+          let val = item[englishKey]
+          // 把时间处理成年月日
+          if (['timeOfEntry', 'correctionTime'].includes(englishKey)) {
+            val = dayjs(val).format('YYYY年MM月DD日')
+          }
+          // 处理的是聘用形式，把对应的文字显示出来
+          if (englishKey === 'formOfEmployment') {
+            const { hireType } = obj
+            const result = hireType.find(v => v.id === +val)
+            val = result ? result.value : '未知'
+          }
+          arr.push(val)
+        })
+        res.push(arr)
+      })
+      return res
     }
   }
 }

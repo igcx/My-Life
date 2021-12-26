@@ -33,3 +33,13 @@ export const reqAddEmployee = form => request({
   url: '/sys/user',
   data: form
 })
+
+/**
+ * 批量新增员工
+ * @param {*} arr [ { 7个字段 }, { 7个字段 }... ]
+ */
+export const reqAddEmployeeBatch = arr => request({
+  method: 'POST',
+  url: '/sys/user/batch',
+  data: arr
+})

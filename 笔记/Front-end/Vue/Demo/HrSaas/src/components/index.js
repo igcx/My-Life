@@ -4,10 +4,11 @@
 
 import PageTools from './PageTools'
 // Vue.component('PageTools', PageTools)
-
+import UploadExcel from './UploadExcel'
 export default {
   install(Vue) {
     // 组件的全局注册
     Vue.component('PageTools', PageTools)
+    Vue.component('UploadExcel', UploadExcel)
   }
 }

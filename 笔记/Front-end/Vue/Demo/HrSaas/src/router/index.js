@@ -8,6 +8,8 @@ Vue.use(Router)
 // 布局架子
 import Layout from '@/layout'
 
+// 导入是有缓存的，下次再被引入 import 时，先走缓存
+
 // 引入多个模块的规则
 import approvalsRouter from './modules/approvals'
 import departmentsRouter from './modules/departments'
@@ -73,6 +75,18 @@ export const constantRoutes = [
         name: 'Dashboard',
         component: () => import('@/views/dashboard/index'),
         meta: { title: '首页', icon: 'dashboard' }
+      }
+    ]
+  },
+  {
+    path: '/import',
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: '',
+        name: 'import',
+        component: () => import('@/views/import')
       }
     ]
   },
