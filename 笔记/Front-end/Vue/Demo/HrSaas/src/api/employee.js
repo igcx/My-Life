@@ -43,3 +43,46 @@ export const reqAddEmployeeBatch = arr => request({
   url: '/sys/user/batch',
   data: arr
 })
+
+/**
+ * 保存员工的基本信息
+ */
+export const reqSaveUserDetailById = data => request({
+  method: 'PUT',
+  url: `/sys/user/${data.id}`,
+  data
+})
+
+/** *
+ *  读取用户详情的基础信息 (个人详情-下面的接口)
+ * **/
+export const reqGetPersonalDetail = (id) => request({
+  method: 'GET',
+  url: `/employees/${id}/personalInfo`
+})
+
+/** *
+ *  更新用户详情的基础信息 (个人详情-下面的接口)
+ * **/
+export const reqUpdatePersonal = (data) => request({
+  method: 'PUT',
+  url: `/employees/${data.userId}/personalInfo`,
+  data
+})
+
+/** **
+ * 获取用户的岗位信息  (岗位信息)
+ * ****/
+export const reqGetJobDetail = id => request({
+  method: 'GET',
+  url: `/employees/${id}/jobs`
+})
+
+/**
+ * 保存岗位信息  (岗位信息)
+ * ****/
+export const reqUpdateJob = data => request({
+  method: 'PUT',
+  url: `/employees/${data.userId}/jobs`,
+  data
+})
