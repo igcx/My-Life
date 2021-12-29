@@ -57,6 +57,7 @@
         <el-col :span="12">
           <el-form-item label="员工头像">
             <!-- 放置上传图片 -->
+            <ImageUpload ref="staffRef" />
           </el-form-item>
         </el-col>
       </el-row>
@@ -90,6 +91,7 @@
 
         <el-form-item label="员工照片">
           <!-- 放置上传图片 -->
+          <ImageUpload ref="picPhoto" />
         </el-form-item>
         <el-form-item label="国家/地区">
           <el-select v-model="formData.nationalArea" class="inputW2">
@@ -383,6 +385,7 @@
 </template>
 <script>
 import EmployeeEnum from '@/constant/employees'
+
 import { reqGetUserDetailById } from '@/api/user'
 import {
   reqSaveUserDetailById,
@@ -473,26 +476,67 @@ export default {
     }
   },
   created() {
+    // 获取上面的信息回显
     this.getUserDetailById()
+    // 获取下面的信息回显
     this.getPersonalDetail()
   },
   methods: {
+    // 上面的获取
     async getUserDetailById() {
       const { data } = await reqGetUserDetailById(this.userId)
+      console.log(data, 99899)
+      // 获取组件实例, 再去获取组件的方法/数据
+      // 回显员工的头像 (和预览思路相同)
+      this.$refs.staffRef.fileList = [{ url: data.staffPhoto }]
       this.userInfo = data
     },
+    // 上面的更新
     async saveUser() {
-      //  调用父组件?
-      await reqSaveUserDetailById(this.userInfo)
+      const ref = this.$refs.staffRef
+      const imgUrl = ref.fileList[0]?.url
+      // 需求: 如果正在上传, 不给点击更新按钮
+      if (!ref.isAllUploadSuccess) {
+        this.$message.error('当前图片正在上传, 请稍后...')
+        return
+      }
+
+      // 后端接口是不允许不上传头像
+      // 需求: 如果发现没有头像, 也不能点击更新
+      if (!imgUrl) {
+        this.$message.error('请上传图片..')
+        return
+      }
+
+      await reqSaveUserDetailById({
+        ...this.userInfo,
+        staffPhoto: imgUrl
+      })
       this.$message.success('保存成功')
     },
-
+    // 下面的获取
     async getPersonalDetail() {
       const { data } = await reqGetPersonalDetail(this.userId) // 获取员工数据
+      this.$refs.picPhoto.fileList = [{ url: data.staffPhoto }]
       this.formData = data
     },
+    // 下面的更新
     async savePersonal() {
-      await reqUpdatePersonal({ ...this.formData, userId: this.userId })
+      const picPhotoRef = this.$refs.picPhoto
+      const fileList = picPhotoRef.fileList[0]?.url
+      if (!picPhotoRef.isAllUploadSuccess) {
+        this.$message.error('当前图片正在上传, 请稍后...')
+        return
+      }
+      if (!fileList) {
+        this.$message.error('请上传图片..')
+        return
+      }
+      await reqUpdatePersonal({
+        ...this.formData,
+        userId: this.userId,
+        staffPhoto: fileList
+      })
       this.$message.success('保存成功')
     }
   }
