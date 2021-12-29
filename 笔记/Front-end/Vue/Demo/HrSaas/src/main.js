@@ -36,6 +36,11 @@ import '@/permission'
 import components from '@/components/index'
 Vue.use(components)
 
+// 导入打印的插件
+import Print from 'vue-print-nb'
+// 安装插件 => install 内部帮你全局注册了一个自定义指令 v-print
+Vue.use(Print)
+
 // 导入过滤器，并且全局注册
 import * as filters from '@/filters'
 Object.keys(filters).forEach(key => {

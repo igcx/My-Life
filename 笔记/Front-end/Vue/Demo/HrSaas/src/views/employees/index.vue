@@ -7,19 +7,54 @@
         </template>
 
         <template #right>
-          <el-button type="warning" size="small" @click="$router.push('/import?type=user')">excel导入</el-button>
-          <el-button type="danger" size="small" @click="handleDownload">excel导出</el-button>
-          <el-button type="primary" size="small" @click="isShow = true">新增员工</el-button>
+          <el-button
+            type="warning"
+            size="small"
+            @click="$router.push('/import?type=user')"
+          >excel导入</el-button>
+          <el-button
+            type="danger"
+            size="small"
+            @click="handleDownload"
+          >excel导出</el-button>
+          <el-button
+            type="primary"
+            size="small"
+            @click="isShow = true"
+          >新增员工</el-button>
         </template>
       </PageTools>
 
-      <el-card v-loading="loading" style="margin-top: 10px;">
+      <el-card v-loading="loading" style="margin-top: 10px">
         <el-table :data="list" border>
-          <el-table-column label="序号" type="index" :index="indexFn" width="80" sortable />
+          <el-table-column
+            label="序号"
+            type="index"
+            :index="indexFn"
+            width="80"
+            sortable
+          />
+          <el-table-column label="头像" prop="staffPhoto" sortable>
+            <template #default="{ row }">
+              <img
+                v-imgerror="errorImg"
+                class="staffPhoto"
+                :src="row.staffPhoto || defaultImg"
+                alt=""
+                @click="handleImgClick(row.staffPhoto)"
+              >
+            </template>
+          </el-table-column>
+
           <el-table-column label="姓名" prop="username" sortable />
           <el-table-column label="手机号" prop="mobile" sortable />
           <el-table-column label="工号" prop="workNumber" sortable />
-          <el-table-column label="聘用形式" :formatter="formatFn" prop="formOfEmployment" sortable />
+          <el-table-column
+            label="聘用形式"
+            :formatter="formatFn"
+            prop="formOfEmployment"
+            sortable
+          />
           <el-table-column label="部门" prop="departmentName" sortable />
           <el-table-column label="入职时间" sortable>
             <template #default="{ row }">
@@ -28,13 +63,21 @@
           </el-table-column>
           <el-table-column label="操作" sortable fixed="right" width="280">
             <!-- <slot name="default" /> -->
-            <template #default="{row}">
-              <el-button type="text" size="small" @click="$router.push(`/employees/detail/${row.id}`)">查看</el-button>
+            <template #default="{ row }">
+              <el-button
+                type="text"
+                size="small"
+                @click="$router.push(`/employees/detail/${row.id}`)"
+              >查看</el-button>
               <el-button type="text" size="small">转正</el-button>
               <el-button type="text" size="small">调岗</el-button>
               <el-button type="text" size="small">离职</el-button>
               <el-button type="text" size="small">角色</el-button>
-              <el-button type="text" size="small" @click="del(row.id)">删除</el-button>
+              <el-button
+                type="text"
+                size="small"
+                @click="del(row.id)"
+              >删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -42,7 +85,7 @@
         <div style="height: 60px; margin-top: 10px">
           <el-pagination
             :current-page="page"
-            :page-sizes="[1,2,3,4,5,6,7,8,9,10]"
+            :page-sizes="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]"
             :page-size="size"
             layout="total, sizes, prev, pager, next, jumper"
             :total="total"
@@ -50,7 +93,6 @@
             @current-change="handleCurrentChange"
           />
         </div>
-
       </el-card>
 
       <!-- <Jack>
@@ -59,15 +101,29 @@
 
       <!-- 新增员工 的对话框 -->
       <!-- 放权 -->
-      <AddEmployee
-        :show-dialog.sync="isShow"
-        @add-employee="getUserList"
-      />
+      <AddEmployee :show-dialog.sync="isShow" @add-employee="getUserList" />
     </div>
+
+    <!-- 二维码对话框 -->
+    <el-dialog
+      title="二维码预览图片"
+      width="400px"
+      :visible="showImg"
+      @close="showImg = false"
+    >
+      <div style="text-align: center">
+        <!-- 用于绘制复杂的二维码，作为二维码的容器 -->
+        <canvas ref="myCanvas" />
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
 import { reqDelEmployee, reqGetUserList } from '@/api/employee'
+import errorImg from '@/assets/common/bigUserHeader.png'
+// 导入 二维码插件
+// QrCode.toCanvas(canvas容器, 信息) => 得到二维码
+import QrCode from 'qrcode'
 // 默认导入
 import obj from '@/constant/employees'
 import AddEmployee from './components/AddEmployee.vue'
@@ -84,7 +140,11 @@ export default {
       list: [],
       total: 0,
       loading: false, // card的loading效果
-      isShow: false // 新增员工对话框 显示/隐藏
+      isShow: false, // 新增员工对话框 显示/隐藏
+      defaultImg:
+        'https://dss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=2146034403,1504718527&fm=26&gp=0.jpg',
+      errorImg,
+      showImg: false
     }
   },
   created() {
@@ -93,7 +153,9 @@ export default {
   methods: {
     async getUserList() {
       this.loading = true
-      const { data: { total, rows }} = await reqGetUserList(this.page, this.size)
+      const {
+        data: { total, rows }
+      } = await reqGetUserList(this.page, this.size)
       // console.log(res, 666655)
       this.list = rows
       this.total = total
@@ -130,41 +192,65 @@ export default {
       // js 解构
       const { hireType } = obj
 
-      const res = hireType.find(item => item.id === +cellValue)
+      const res = hireType.find((item) => item.id === +cellValue)
 
       return res ? res.value : '未知'
     },
     del(id) {
-      this.$confirm('确定要删除该员工?', '温馨提示', { type: 'warning' }).then(async() => {
-        await reqDelEmployee(id)
-        // console.log(res, 88888)
-        this.$message.success('删除成功')
+      this.$confirm('确定要删除该员工?', '温馨提示', { type: 'warning' })
+        .then(async() => {
+          await reqDelEmployee(id)
+          // console.log(res, 88888)
+          this.$message.success('删除成功')
 
-        if (this.list.length === 1 && this.page > 1) {
-          this.page--
-        }
+          if (this.list.length === 1 && this.page > 1) {
+            this.page--
+          }
 
-        // 发送请求 获取最新的数据 渲染
-        this.getUserList()
-      }).catch(() => {
-        console.log('取消')
+          // 发送请求 获取最新的数据 渲染
+          this.getUserList()
+        })
+        .catch(() => {
+          console.log('取消')
+        })
+    },
+    // 点击显示二维码
+    handleImgClick(imgUrl) {
+      if (!imgUrl) return
+      // 显示对话框
+      this.showImg = true
+      // 获取 DOM
+      // DOM 更新是异步的
+      this.$nextTick(() => {
+        QrCode.toCanvas(this.$refs.myCanvas, imgUrl)
       })
+      console.log(imgUrl)
     },
     async handleDownload() {
-      const headersArr = ['姓名', '手机号', '入职日期', '聘用形式', '转正日期', '工号', '部门']
+      const headersArr = [
+        '姓名',
+        '手机号',
+        '入职日期',
+        '聘用形式',
+        '转正日期',
+        '工号',
+        '部门'
+      ]
 
       // 中英文对照关系
       const headersRelations = {
-        '姓名': 'username',
-        '手机号': 'mobile',
-        '入职日期': 'timeOfEntry',
-        '聘用形式': 'formOfEmployment',
-        '转正日期': 'correctionTime',
-        '工号': 'workNumber',
-        '部门': 'departmentName'
+        姓名: 'username',
+        手机号: 'mobile',
+        入职日期: 'timeOfEntry',
+        聘用形式: 'formOfEmployment',
+        转正日期: 'correctionTime',
+        工号: 'workNumber',
+        部门: 'departmentName'
       }
       // 发请求 获取所有的员工数据 => 分页的接口
-      const { data: { rows }} = await reqGetUserList(1, this.total)
+      const {
+        data: { rows }
+      } = await reqGetUserList(1, this.total)
       console.log(rows)
 
       const resArr = this.transArrayTo2Wei(headersArr, headersRelations, rows)
@@ -175,7 +261,7 @@ export default {
       // 合并单元格
       const merges = ['A1:A2', 'B1:F1', 'G1:G2']
       // 动态导入
-      import('@/vendor/Export2Excel').then(excel => {
+      import('@/vendor/Export2Excel').then((excel) => {
         // console.log(obj)
         excel.export_json_to_excel({
           // 表格的表头
@@ -196,11 +282,11 @@ export default {
       // rows.length 决定了有多少小数组
       // headersArr 表头的长度决定了小数组有多少项
       const res = []
-      rows.forEach(item => {
+      rows.forEach((item) => {
         // item => 每一项用户信息
         const arr = []
 
-        headersArr.forEach(key => {
+        headersArr.forEach((key) => {
           // key => 中文键 转为 英文键
           const englishKey = headersRelations[key]
 
@@ -212,7 +298,7 @@ export default {
           // 处理的是聘用形式，把对应的文字显示出来
           if (englishKey === 'formOfEmployment') {
             const { hireType } = obj
-            const result = hireType.find(v => v.id === +val)
+            const result = hireType.find((v) => v.id === +val)
             val = result ? result.value : '未知'
           }
           arr.push(val)
@@ -225,6 +311,12 @@ export default {
 }
 </script>
 
-<style>
-
+<style lang="scss" scoped>
+.employees-container {
+  .staffPhoto {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+  }
+}
 </style>
