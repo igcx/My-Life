@@ -7,7 +7,7 @@ export const imgerror = {
     // el => element 指令所在的那个元素
     // binding => 指令相关的信息对象
     // binding.value => 指令的值
-    console.log(el, binding.value)
+    // console.log(el, binding.value)
     // 图片出错了
     el.onerror = function() {
       el.src = binding.value

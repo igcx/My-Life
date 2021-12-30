@@ -72,7 +72,7 @@
               <el-button type="text" size="small">转正</el-button>
               <el-button type="text" size="small">调岗</el-button>
               <el-button type="text" size="small">离职</el-button>
-              <el-button type="text" size="small">角色</el-button>
+              <el-button type="text" size="small" @click="handleRoleAssign(row.id)">角色</el-button>
               <el-button
                 type="text"
                 size="small"
@@ -116,10 +116,13 @@
         <canvas ref="myCanvas" />
       </div>
     </el-dialog>
+    <!-- 分配角色的对话框 -->
+    <AssignRole :show-role-dialog.sync="showRoleDialog" :user-id="userId" />
   </div>
 </template>
 <script>
 import { reqDelEmployee, reqGetUserList } from '@/api/employee'
+import AssignRole from './components/AssignRole.vue'
 import errorImg from '@/assets/common/bigUserHeader.png'
 // 导入 二维码插件
 // QrCode.toCanvas(canvas容器, 信息) => 得到二维码
@@ -131,7 +134,8 @@ import dayjs from 'dayjs'
 export default {
   name: 'Employees',
   components: {
-    AddEmployee
+    AddEmployee,
+    AssignRole
   },
   data() {
     return {
@@ -144,7 +148,9 @@ export default {
       defaultImg:
         'https://dss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=2146034403,1504718527&fm=26&gp=0.jpg',
       errorImg,
-      showImg: false
+      showImg: false,
+      showRoleDialog: false,
+      userId: '' // 记录当前分配角色的用户 ID
     }
   },
   created() {
@@ -306,6 +312,11 @@ export default {
         res.push(arr)
       })
       return res
+    },
+    handleRoleAssign(id) {
+      // 显示弹窗
+      this.showRoleDialog = true
+      this.userId = id
     }
   }
 }
