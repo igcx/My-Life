@@ -44,10 +44,10 @@ module.exports = {
       '/api': {
         // 目标: '后端服务器真正的地址'
 
-        // target: 'http://ihrm-java.itheima.net' // 线上的接口
+        target: 'http://ihrm.itheima.net' // 线上的接口
 
         // 本地接口（需要部署） mongodb
-        target: 'http://localhost:3000'
+        // target: 'http://localhost:3000'
         // target: 'http://192.168.141.36:3085'
 
         // 以下配置不是必须的
