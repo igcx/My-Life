@@ -32,8 +32,35 @@
                 </el-form-item>
               </el-form>
               <template #footer>
-                <el-button size="small" type="primary" @click="clickSubmit">确认</el-button>
+                <el-button
+                  size="small"
+                  type="primary"
+                  @click="clickSubmit"
+                >确认</el-button>
                 <el-button size="small" @click="btnCancel">取消</el-button>
+              </template>
+            </el-dialog>
+            <!-- 分配权限的弹层 -->
+            <el-dialog
+              title="分配权限"
+              :visible="showAssignDialog"
+              @close="closeAssignDialog"
+            >
+              <!-- node-key 唯一标识 -->
+              <el-tree
+                ref="tree"
+                :data="permissionList"
+                show-checkbox
+                check-strictly
+                default-expand-all
+                :props="{ label: 'name' }"
+                node-key="id"
+              />
+              <template #footer>
+                <div style="text-align: right">
+                  <el-button @click="closeAssignDialog">取消</el-button>
+                  <el-button type="primary" @click="clickAssignSubmit">确定</el-button>
+                </div>
               </template>
             </el-dialog>
             <!-- 表格 -->
@@ -48,8 +75,17 @@
               <el-table-column prop="description" label="描述" />
               <el-table-column label="操作">
                 <template #default="{ row }">
-                  <el-button size="small" type="success">分配权限</el-button>
-                  <el-button size="small" type="primary" @click="edit(row.id)">编辑</el-button>
+                  <el-button
+                    size="small"
+                    type="success"
+                    @click="assign(row.id)"
+                  >分配权限</el-button>
+
+                  <el-button
+                    size="small"
+                    type="primary"
+                    @click="edit(row.id)"
+                  >编辑</el-button>
                   <el-button
                     size="small"
                     type="danger"
@@ -89,18 +125,36 @@
               :closable="false"
             />
             <!-- 表单 -->
-            <el-form label-width="120px" style="margin-top:50px">
+            <el-form label-width="120px" style="margin-top: 50px">
               <el-form-item label="公司名称">
-                <el-input v-model="companyForm.name" disabled style="width:400px" />
+                <el-input
+                  v-model="companyForm.name"
+                  disabled
+                  style="width: 400px"
+                />
               </el-form-item>
               <el-form-item label="公司地址">
-                <el-input v-model="companyForm.companyAddress" disabled style="width:400px" />
+                <el-input
+                  v-model="companyForm.companyAddress"
+                  disabled
+                  style="width: 400px"
+                />
               </el-form-item>
               <el-form-item label="邮箱">
-                <el-input v-model="companyForm.mailbox" disabled style="width:400px" />
+                <el-input
+                  v-model="companyForm.mailbox"
+                  disabled
+                  style="width: 400px"
+                />
               </el-form-item>
               <el-form-item label="备注">
-                <el-input v-model="companyForm.remarks" type="textarea" :rows="3" disabled style="width:400px" />
+                <el-input
+                  v-model="companyForm.remarks"
+                  type="textarea"
+                  :rows="3"
+                  disabled
+                  style="width: 400px"
+                />
               </el-form-item>
             </el-form>
           </el-tab-pane>
@@ -111,9 +165,18 @@
 </template>
 
 <script>
-import { reqGetRoleList, reqDelRole, reqAddRole, reqGetRoleDetail, reqUpdateRole } from '@/api/setting'
+import {
+  reqGetRoleList,
+  reqDelRole,
+  reqAddRole,
+  reqGetRoleDetail,
+  reqUpdateRole,
+  reqAssignPerm
+} from '@/api/setting'
 import { reqGetCompanyById } from '@/api/company'
 import { mapState } from 'vuex'
+import { reqGetPermissionList } from '@/api/permission'
+import { transListToTreeData } from '@/utils'
 export default {
   name: 'Setting',
   data() {
@@ -151,7 +214,9 @@ export default {
         companyAddress: '',
         mailbox: '',
         remarks: ''
-      }
+      },
+      showAssignDialog: false, // 分配权限的确认框
+      permissionList: [] // 树形的权限列表
     }
   },
   computed: {
@@ -261,6 +326,35 @@ export default {
       const { data } = await reqGetCompanyById(this.userInfo.companyId)
       this.companyForm = data
       console.log(data)
+    },
+    // 分配权限的弹框
+    closeAssignDialog() {
+      this.showAssignDialog = false
+      // 重置选中项为空
+      this.$refs.tree.setCheckedKeys([])
+    },
+    // 分配权限的按钮
+    async assign(id) {
+      this.showAssignDialog = true
+      this.roleId = id
+      console.log(id)
+      // console.log(id)
+      // 1. 获取所有权限列表
+      const { data } = await reqGetPermissionList()
+      // 列表数据转为树形数据
+      this.permissionList = transListToTreeData(data, '0')
+      // 2. 获取角色之前的权限 进行回显(就是获取角色详情那个接口)
+      const { data: { permIds }} = await reqGetRoleDetail(id)
+      console.log(permIds)
+      // 设置树形结构节点选中调用tree组件的方法 (配合node-key)
+      this.$refs.tree.setCheckedKeys(permIds)
+    },
+    async clickAssignSubmit() {
+      const permIds = this.$refs.tree.getCheckedKeys()
+      const res = await reqAssignPerm(this.roleId, permIds)
+      console.log(res)
+      this.$message.success(res.message)
+      this.closeAssignDialog()
     }
   }
 }
