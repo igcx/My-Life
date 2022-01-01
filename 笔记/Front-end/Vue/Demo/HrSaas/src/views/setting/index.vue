@@ -216,7 +216,8 @@ export default {
         remarks: ''
       },
       showAssignDialog: false, // 分配权限的确认框
-      permissionList: [] // 树形的权限列表
+      permissionList: [], // 树形的权限列表
+      roleId: '' // 存储当前操作的角色 id，之后拿着id发请求分配权限
     }
   },
   computed: {
@@ -350,10 +351,13 @@ export default {
       this.$refs.tree.setCheckedKeys(permIds)
     },
     async clickAssignSubmit() {
+      // 如何获取树形节点的选中数组
       const permIds = this.$refs.tree.getCheckedKeys()
       const res = await reqAssignPerm(this.roleId, permIds)
       console.log(res)
+      // 提示
       this.$message.success(res.message)
+      // 关闭
       this.closeAssignDialog()
     }
   }

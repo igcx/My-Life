@@ -28,11 +28,15 @@ export default {
   components: { SidebarItem, Logo },
   computed: {
     ...mapGetters([
-      'sidebar'
+      'sidebar',
+      'routes'
     ]),
-    routes() {
-      return this.$router.options.routes
-    },
+    // routes() {
+    //   // this.$router.options.routes => 获取的是new 实例的时候提供的那个对象
+    //   // this.$router.options.routes => 提供路由规则对象们，不包含动态添加的路由规则的
+    //   console.log(this.$router.options.routes)
+    //   return this.$router.options.routes
+    // },
     activeMenu() {
       const route = this.$route
       const { meta, path } = route

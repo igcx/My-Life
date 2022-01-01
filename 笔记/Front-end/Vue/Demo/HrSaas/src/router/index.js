@@ -89,11 +89,12 @@ export const constantRoutes = [
         component: () => import('@/views/import')
       }
     ]
-  },
+  }
 
   // 404页必须放在末尾 !!!
   // 匹配所有路由 通常配合 404 一起用
-  { path: '*', redirect: '/404', hidden: false }
+  // 临时注释，将来一定要添加到路由规则的最后
+  // { path: '*', redirect: '/404', hidden: false }
 ]
 
 const createRouter = () => new Router({
@@ -102,17 +103,18 @@ const createRouter = () => new Router({
   // 我们作为开发者，一开始是不考虑权限管理的，应该默认看到所有路由
   // 临时合并动态路由和静态路由
   routes: [
-    ...constantRoutes,
-    ...asyncRoutes
+    ...constantRoutes
+    // ...asyncRoutes
   ]
 })
 
 const router = createRouter()
 
 // Detail see: https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
+// 重置路由 => new了一个新的路由实例，只要新的路由实例的匹配规则，替换给老的路由规则
 export function resetRouter() {
-  const newRouter = createRouter()
-  router.matcher = newRouter.matcher // reset router
+  const newRouter = createRouter() // 重新 new 路由实例
+  router.matcher = newRouter.matcher // 路由匹配函数
 }
 
 export default router

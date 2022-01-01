@@ -5,6 +5,7 @@
 //  2. 让token变成响应式的 一旦变化 所有组件都知道
 
 import { reqLogin, reqGetProfile, reqGetUserDetailById } from '@/api/user'
+import { resetRouter } from '@/router'
 import { getToken, removeToken, setToken } from '@/utils/auth'
 
 const state = {
@@ -99,6 +100,14 @@ const actions = {
   logout(context) {
     context.commit('removeToken')
     context.commit('removeUserInfo')
+
+    // 官方提供的一个用于重置路由的函数
+    resetRouter()
+
+    // 同步一下vuex中的 routes(优化)
+    // 跨模块提交mutations/action 必须提供第三个参数 {root: true}
+    // 1. 先回到大仓库 2. 在大仓库中找 permission/setRoutes
+    context.commit('permission/setRoutes', [], { root: true })
   }
 }
 const getters = {}

@@ -8,6 +8,9 @@ import store from '@/store'
 import NProgress from 'nprogress' // 引入一份进度条插件
 import 'nprogress/nprogress.css' // 引入进度条样式
 
+// 按需导入所有路由
+// import { asyncRoutes } from '@/router'
+
 // 判断有无 token
 // 1. 有 token
 //  1.1 判断是不是去登陆页 如果去登录页 没有必要去登录 引导去首页
@@ -38,8 +41,28 @@ router.beforeEach(async(to, from, next) => {
 
       // 只有在仓库里没有用户资料，这个时候可以发请求
       if (!store.state.user.userInfo.userId) {
-        const res = await store.dispatch('user/getUserProfile')
-        console.log(res)
+        const { roles: { menus }} = await store.dispatch('user/getUserProfile')
+        console.log(menus)
+
+        // 封装了路由模块，所有跟路由相关的操作都应该放在路由模块(规范)
+        // 过滤路由这个操作应该放在路由模块
+        // actions 内部封装了 promise
+        // 只要是分发 actions 无论同步还是异步，都是 await 接受结果(规范)
+        // otherRoutes => 过滤好的路由规则(用户自己的路由规则)
+        const otherRoutes = await store.dispatch('permission/filterRoutes', menus)
+
+        // 一定是看清了这个人的所有信息(menus)，给他添加对应的路由规则，放他进去
+        // router.addRoutes([{},{},{}...])
+        // 临时先添加所有的动态路由规则
+        // addRoutes 动态添加路由规则们（耗时的，异步的）
+        router.addRoutes([...otherRoutes, { path: '*', redirect: '/404', hidden: false }])
+
+        // 为了让以上的路由规则生效以后，再放行，在进入页面（重进了一次页面）
+        next({
+          ...to,
+          replace: true // 避免路由跳转历史重复的问题
+        })
+        return
       }
       next()
     }
