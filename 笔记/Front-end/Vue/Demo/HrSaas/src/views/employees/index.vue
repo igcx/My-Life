@@ -8,11 +8,13 @@
 
         <template #right>
           <el-button
+            v-if="checkBtnPerm('POINT_EXCEL_IMPORT')"
             type="warning"
             size="small"
             @click="$router.push('/import?type=user')"
           >excel导入</el-button>
           <el-button
+            v-if="checkBtnPerm('POINT_EXCEL_EXPORT')"
             type="danger"
             size="small"
             @click="handleDownload"
@@ -20,7 +22,7 @@
           <el-button
             type="primary"
             size="small"
-            @click="isShow = true"
+            @click="clickAdd"
           >新增员工</el-button>
         </template>
       </PageTools>
@@ -67,15 +69,21 @@
               <el-button
                 type="text"
                 size="small"
+                :disabled="!checkBtnPerm('POINT_USER_EDIT')"
                 @click="$router.push(`/employees/detail/${row.id}`)"
               >查看</el-button>
               <el-button type="text" size="small">转正</el-button>
               <el-button type="text" size="small">调岗</el-button>
               <el-button type="text" size="small">离职</el-button>
-              <el-button type="text" size="small" @click="handleRoleAssign(row.id)">角色</el-button>
               <el-button
                 type="text"
                 size="small"
+                @click="handleRoleAssign(row.id)"
+              >角色</el-button>
+              <el-button
+                type="text"
+                size="small"
+                :disabled="!checkBtnPerm('POINT_USER_DELETE')"
                 @click="del(row.id)"
               >删除</el-button>
             </template>
@@ -131,12 +139,16 @@ import QrCode from 'qrcode'
 import obj from '@/constant/employees'
 import AddEmployee from './components/AddEmployee.vue'
 import dayjs from 'dayjs'
+
+// mixins 混入
+import check from '@/mixins/check'
 export default {
   name: 'Employees',
   components: {
     AddEmployee,
     AssignRole
   },
+  mixins: [check],
   data() {
     return {
       page: 1,
@@ -157,6 +169,15 @@ export default {
     this.getUserList()
   },
   methods: {
+    clickAdd() {
+      // 有没有权限
+      if (!this.checkBtnPerm('POINT_USER_ADD')) {
+        // 没有权限
+        this.$message.error('等级不够，无法新增，请联系管理员')
+        return
+      }
+      this.isShow = true
+    },
     async getUserList() {
       this.loading = true
       const {
