@@ -4,16 +4,6 @@ import Vue from 'vue'
 // base.css 样式初始化 + 样式兼容
 import 'normalize.css/normalize.css'
 
-// 按需导入 => 打包体积 => 加载更快 => 用户体验更好
-// 后台管理系统 => 用户体验不会特别注重
-
-// 导入elementui 组件库  => 完整导入(1.组件用的7788  2.不会特别管用户体验)
-import ElementUI from 'element-ui'
-// 安装组件库 且英文包
-// Vue.use(ElementUI, { locale })
-// 如果想要中文版 element-ui，按如下方式声明
-Vue.use(ElementUI)
-
 // 导入组件库样式
 import 'element-ui/lib/theme-chalk/index.css'
 // 导入一个语言包 英文包 用于中英切换
@@ -25,6 +15,16 @@ import '@/styles/index.scss'
 import App from './App'
 import store from './store'
 import router from './router'
+
+// 按需导入 => 打包体积 => 加载更快 => 用户体验更好
+// 后台管理系统 => 用户体验不会特别注重
+
+// 导入elementui 组件库  => 完整导入(1.组件用的7788  2.不会特别管用户体验)
+import ElementUI from 'element-ui'
+// 安装组件库 且英文包
+// Vue.use(ElementUI, { locale })
+// 如果想要中文版 element-ui，按如下方式声明
+Vue.use(ElementUI)
 
 // 导入icon模块 直接执行
 import '@/icons' // icon
@@ -59,6 +59,13 @@ Object.keys(directives).forEach(item => {
   Vue.directive(item, directives[item])
 })
 
+// 导入语言包
+import i18n from '@/lang'
+// 配置ElementUI的中英切换逻辑
+Vue.use(ElementUI, {
+  i18n: (key, value) => i18n.t(key, value)
+})
+
 // 关闭生产提示
 Vue.config.productionTip = false
 
@@ -66,5 +73,6 @@ new Vue({
   // el: '#app',  老写法
   router,
   store,
+  i18n,
   render: h => h(App)
 }).$mount('#app')

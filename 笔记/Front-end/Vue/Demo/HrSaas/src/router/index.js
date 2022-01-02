@@ -72,7 +72,7 @@ export const constantRoutes = [
       // 首页的二级路由
       {
         path: 'dashboard',
-        name: 'Dashboard',
+        name: 'dashboard',
         component: () => import('@/views/dashboard/index'),
         meta: { title: '首页', icon: 'dashboard' }
       }

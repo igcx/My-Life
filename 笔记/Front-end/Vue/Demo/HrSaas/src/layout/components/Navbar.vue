@@ -8,11 +8,14 @@
 
     <!-- 公司名称 -->
     <div class="app-breadcrumb">
-      江苏传智播客教育科技股份有限公司
-      <span class="breadBtn">体验版</span>
+      {{ $t('navbar.title') }}
+      <span class="breadBtn">{{ $t('navbar.version') }}</span>
     </div>
 
     <div class="right-menu">
+      <!-- 语言包 -->
+      <lang class="right-menu-item" />
+
       <!-- 全屏组件 -->
       <ScreenFull class="right-menu-item" />
       <!-- 下拉菜单 -->
@@ -34,17 +37,17 @@
            -->
           <router-link to="/">
             <el-dropdown-item>
-              首页
+              {{ $t('navbar.dashboard') }}
             </el-dropdown-item>
           </router-link>
 
           <a target="_blank" href="https://gitee.com/li-liqiang/hrsaas-vue-91">
-            <el-dropdown-item>项目地址</el-dropdown-item>
+            <el-dropdown-item>{{ $t('navbar.github') }}</el-dropdown-item>
           </a>
 
           <!-- native 给组件内部的根元素注册原生事件!!不能删 -->
           <el-dropdown-item divided @click.native="handleLogout">
-            <span v-color="color" style="display:block;">退出登录</span>
+            <span v-color="color" style="display:block;">{{ $t('navbar.logOut') }}</span>
           </el-dropdown-item>
 
         </el-dropdown-menu>
