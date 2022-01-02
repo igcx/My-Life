@@ -99,6 +99,7 @@
             <span>绩效指数</span>
           </div>
           <!-- 放置雷达图 -->
+          <Radar />
         </el-card>
         <!-- 帮助连接 -->
         <el-card class="box-card">
@@ -140,10 +141,14 @@ import defaultImg from '@/assets/common/bigUserHeader.png'
 // 工作日历
 import WorkCalendar from './components/WorkCalendar.vue'
 
+// 雷达图
+import Radar from './components/Radar'
+
 export default {
   name: 'Dashboard',
   components: {
-    WorkCalendar
+    WorkCalendar,
+    Radar
   },
   data() {
     return {
