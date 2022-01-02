@@ -6,11 +6,13 @@ import PageTools from './PageTools'
 // Vue.component('PageTools', PageTools)
 import UploadExcel from './UploadExcel'
 import ImageUpload from './ImageUpload'
+import ScreenFull from './ScreenFull'
 export default {
   install(Vue) {
     // 组件的全局注册
     Vue.component('PageTools', PageTools) // 注册工具栏组件
     Vue.component('UploadExcel', UploadExcel) // 注册导入excel组件
     Vue.component('ImageUpload', ImageUpload) // 注册导入上传组件
+    Vue.component('ScreenFull', ScreenFull) // 注册全屏组件
   }
 }

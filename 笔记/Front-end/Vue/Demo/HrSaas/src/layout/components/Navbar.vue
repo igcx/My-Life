@@ -13,6 +13,9 @@
     </div>
 
     <div class="right-menu">
+      <!-- 全屏组件 -->
+      <ScreenFull class="right-menu-item" />
+      <!-- 下拉菜单 -->
       <el-dropdown class="avatar-container" trigger="click">
 
         <div class="avatar-wrapper">
@@ -57,10 +60,12 @@
 const defaultImg = require('@/assets/common/bigUserHeader.png')
 import { mapGetters } from 'vuex'
 import Hamburger from '@/components/Hamburger'
+import ScreenFull from '@/components/ScreenFull'
 
 export default {
   components: {
-    Hamburger
+    Hamburger,
+    ScreenFull
   },
   data() {
     return {
@@ -157,7 +162,7 @@ export default {
       height: 100%;
       font-size: 18px;
       color: #5a5e66;
-      vertical-align: text-bottom;
+      vertical-align: middle;
 
       &.hover-effect {
         cursor: pointer;
