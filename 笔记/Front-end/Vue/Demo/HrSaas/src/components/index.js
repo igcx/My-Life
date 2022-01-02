@@ -8,6 +8,8 @@ import UploadExcel from './UploadExcel'
 import ImageUpload from './ImageUpload'
 import ScreenFull from './ScreenFull'
 import Lang from './Lang'
+import TagsView from './TagsView'
+
 export default {
   install(Vue) {
     // 组件的全局注册
@@ -16,5 +18,6 @@ export default {
     Vue.component('ImageUpload', ImageUpload) // 注册导入上传组件
     Vue.component('ScreenFull', ScreenFull) // 注册全屏组件
     Vue.component('Lang', Lang) // 注册语言包组件
+    Vue.component('TagsView', TagsView) // 注册标签页组件
   }
 }

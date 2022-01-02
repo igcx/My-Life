@@ -10,6 +10,9 @@
       <div :class="{'fixed-header':fixedHeader}">
         <!-- 头部导航 -->
         <navbar />
+
+        <!-- 多页标签 -->
+        <TagsView />
       </div>
       <!-- 主体区域 -->
       <app-main />

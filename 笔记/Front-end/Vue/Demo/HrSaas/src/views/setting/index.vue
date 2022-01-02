@@ -178,7 +178,7 @@ import { mapState } from 'vuex'
 import { reqGetPermissionList } from '@/api/permission'
 import { transListToTreeData } from '@/utils'
 export default {
-  name: 'Setting',
+  name: 'Settings',
   data() {
     return {
       activeName: 'role',

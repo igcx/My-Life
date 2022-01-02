@@ -8,7 +8,9 @@
         /article/1   /article/2  Article组件 内容就不更新
         key 不同 组件销毁重建 => 不会出现缓存
        -->
-      <router-view :key="key" />
+      <keep-alive :include="cachedViews">
+        <router-view :key="key" />
+      </keep-alive>
     </transition>
   </section>
 </template>
@@ -17,6 +19,11 @@
 export default {
   name: 'AppMain',
   computed: {
+    cachedViews() {
+      return this.$store.state.tagsView.cachedViews.map((item) => {
+        return item[0].toUpperCase() + item.slice(1)
+      })
+    },
     key() {
       return this.$route.path
     }
@@ -32,7 +39,7 @@ export default {
   position: relative;
   overflow: hidden;
 }
-.fixed-header+.app-main {
+.fixed-header + .app-main {
   padding-top: 50px;
 }
 </style>
