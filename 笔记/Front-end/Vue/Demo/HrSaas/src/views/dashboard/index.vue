@@ -30,6 +30,7 @@
             <span>工作日历</span>
           </div>
           <!-- 放置日历组件 -->
+          <WorkCalendar />
         </el-card>
         <!-- 公告 -->
         <el-card class="box-card">
@@ -136,8 +137,14 @@
 import { mapGetters, mapState } from 'vuex'
 import defaultImg from '@/assets/common/bigUserHeader.png'
 
+// 工作日历
+import WorkCalendar from './components/WorkCalendar.vue'
+
 export default {
   name: 'Dashboard',
+  components: {
+    WorkCalendar
+  },
   data() {
     return {
       defaultImg
