@@ -97,17 +97,23 @@ const actions = {
   // }
   // 退出登录（提交 2 个 mutation）
   // 异步封装操作也可以放同步的代码
-  logout(context) {
-    context.commit('removeToken')
-    context.commit('removeUserInfo')
+  logout({ commit }) {
+    // 1. 移除token
+    commit('removeToken')
+    // 2. 移除 个人信息
+    commit('removeUserInfo')
 
     // 官方提供的一个用于重置路由的函数
+    // 3. 重置路由
     resetRouter()
 
-    // 同步一下vuex中的 routes(优化)
+    // 4. 同步一下vuex中的 routes(优化)
     // 跨模块提交mutations/action 必须提供第三个参数 {root: true}
     // 1. 先回到大仓库 2. 在大仓库中找 permission/setRoutes
-    context.commit('permission/setRoutes', [], { root: true })
+    commit('permission/setRoutes', [], { root: true })
+
+    // 5. 清除主题色 => 跨模块提交
+    commit('settings/resetTheme', null, { root: true })
   }
 }
 const getters = {}

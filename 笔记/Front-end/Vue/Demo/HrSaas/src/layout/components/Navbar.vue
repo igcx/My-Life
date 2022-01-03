@@ -1,5 +1,5 @@
 <template>
-  <div class="navbar">
+  <div class="navbar" :style="{background: $store.state.settings.theme}">
     <!-- 汉堡包: 控制侧边栏的折叠.展开 -->
     <hamburger :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
 
@@ -16,6 +16,8 @@
       <!-- 语言包 -->
       <lang class="right-menu-item" />
 
+      <!-- 切换主题 -->
+      <ThemePicker class="right-menu-item" style="padding-top:12px" @changecolor="handleChange" />
       <!-- 全屏组件 -->
       <ScreenFull class="right-menu-item" />
       <!-- 下拉菜单 -->
@@ -100,6 +102,14 @@ export default {
       this.$store.dispatch('user/logout')
       // 跳转路由
       this.$router.push('/login')
+    },
+    handleChange(str) {
+      console.log(str)
+      // 更新仓库中 提交 mutation => 分发 action
+      this.$store.dispatch('settings/changeSetting', {
+        key: 'theme',
+        value: str
+      })
     }
   }
 }

@@ -9,6 +9,7 @@ import ImageUpload from './ImageUpload'
 import ScreenFull from './ScreenFull'
 import Lang from './Lang'
 import TagsView from './TagsView'
+import ThemePicker from './ThemePicker'
 
 export default {
   install(Vue) {
@@ -19,5 +20,6 @@ export default {
     Vue.component('ScreenFull', ScreenFull) // 注册全屏组件
     Vue.component('Lang', Lang) // 注册语言包组件
     Vue.component('TagsView', TagsView) // 注册标签页组件
+    Vue.component('ThemePicker', ThemePicker) // 注册主题换肤组件
   }
 }

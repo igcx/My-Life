@@ -1,0 +1,28 @@
+.default-theme {
+  .breadBtn {
+    background-color: #8df!important;
+    color: #fff;
+  }
+  // 将来定制颜色直接复制相应的类名过来就可以
+}
+
+.black-theme {
+  .breadBtn {
+    background-color: #fff!important;
+    color: #000;
+  }
+}
+
+.purple-theme {
+  .breadBtn {
+    background-color: orange!important;
+    color: #fff;
+  }
+}
+
+.red-theme {
+  .breadBtn {
+    background-color: pink!important;
+    color: #000;
+  }
+}
