@@ -37,7 +37,7 @@ export default {
 .myicon {
   width: 20px;
   height: 20px;
-  fill: #fff;
+  fill: white !important;
   cursor: pointer;
 }
 </style>
