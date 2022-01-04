@@ -98,7 +98,7 @@ export const constantRoutes = [
 ]
 
 const createRouter = () => new Router({
-  // mode: 'history', // require service support
+  mode: 'history', // require service support
   scrollBehavior: () => ({ y: 0 }), // 管理滚动行为, 让页面切换时回到顶部
   // 我们作为开发者，一开始是不考虑权限管理的，应该默认看到所有路由
   // 临时合并动态路由和静态路由
