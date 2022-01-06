@@ -41,6 +41,7 @@ git blame <file>     # 以列表的方式查看指定文件的提交历史
 git reset --hard 版本号    # 撤销工作目录中所有未提交文件的修改内容
 git checkout HEAD <file> # 撤销指定的未提交文件的修改内容
 git revert <commit>      # 撤销指定的提交
+git stash                # 清空本地未提交的代码
 
 ```
 
