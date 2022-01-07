@@ -124,6 +124,7 @@ export function transListToTreeData(list, value) {
   const arr = []
 
   list.forEach((item) => {
+    // console.log(item, 111)
     // 判断一级部门的 pid 是否为 " "，如果是空就代表是一级部门
     if (item.pid === value) {
       // 找的是一级部门
@@ -138,6 +139,7 @@ export function transListToTreeData(list, value) {
       }
       // 把符合一级部门的数据添加到数组中
       arr.push(item)
+      console.log(item, 111)
     }
   })
 
