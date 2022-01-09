@@ -267,26 +267,132 @@ ReactDOM.render(title, document.getElementById('root'))
 // ReactDOM.render(element, document.getElementById('root'))
 
 // 列表渲染练习2
+// import React from 'react'
+// import ReactDOM from 'react-dom'
+
+// const list = [
+//   { id: 1, name: '香碰碰的口水鸡', price: 8.88 },
+//   { id: 2, name: '美味大鸡腿', price: 3.5 },
+//   { id: 3, name: '阳澄湖大闸蟹', price: 49.9 },
+// ]
+// // 口诀：你要遍历渲染谁，就剪切它，在 map 方法中 return它
+// const element = (
+//   <div>
+//     <h3>列表渲染练习2</h3>
+//     <ul>
+//       {list.map((item) => (
+//         <li key={item.id}>
+//           <h3>商品名称: {item.name}</h3>
+//           <p>商品价格: {item.price}</p>
+//         </li>
+//       ))}
+//     </ul>
+//   </div>
+// )
+
+// ReactDOM.render(element, document.getElementById('root'))
+
+// 控制样式
+// import React from 'react'
+// import ReactDOM from 'react-dom'
+
+// const element = (
+//   <div className='box' style={{width: 200, height: '200px', background: 'pink'}}>
+//     <h3>样式处理</h3>
+//   </div>
+// )
+// ReactDOM.render(element, document.getElementById('root'))
+
+// 操作类名
+// import React from 'react'
+// import ReactDOM from 'react-dom'
+// import classNames from 'classnames'
+
+// const title = '大标题'
+
+// const element = (
+//   <div
+//     desc={title}
+//     className={classNames({
+//       box: true,
+//       pink: true,
+//       border20: false,
+//       big: false
+//     })}
+//   >
+//     <h3>大标题</h3>
+//   </div>
+// )
+// ReactDOM.render(element, document.getElementById('root'))
+
+// 整体练习
+/*
+  1 根据ist列表数据，渲染一个列表 
+  2 列表用ul，列表中的每一项是li
+  3 每个li元素中，包含两个元素：h3和p 
+  4 h3術签展示内容为：评论人：Xx->name 
+  5 p标签展示内容为：评论内容・XX-> content 
+  6 通过 className 的方式添加样式:
+    6.1 去掉li元素前面的点
+    6.2 评论人添加pink顾色
+    6.3 评论内容 skyblue 背景色
+  7 附加：
+  如果 list 有数据就展示上述的列表
+  如果 list 中没有数据，就展示 <div>暂无数据</div
+ */
+
+
 import React from 'react'
 import ReactDOM from 'react-dom'
+import './index.css'
 
 const list = [
-  { id: 1, name: '香碰碰的口水鸡', price: 8.88 },
-  { id: 2, name: '美味大鸡腿', price: 3.5 },
-  { id: 3, name: '阳澄湖大闸蟹', price: 49.9 },
+  { id: 1, name: '刘德华', content: '给我一杯忘情水' },
+  { id: 2, name: '五月天', content: '不打扰，是我的温柔' },
+  { id: 3, name: '毛不易', content: '像我这样优秀的人' },
 ]
-// 口诀：你要遍历渲染谁，就剪切它，在 map 方法中 return它
+// 方法一
+// const element = (
+//   <div>
+//     <h3>整体练习</h3>
+//     {list.length > 0 ? (
+//       <ul>
+//         {list.map((item) => (
+//           <li key={item.id}>
+//             <h3 className="title">歌手: {item.name}</h3>
+//             <p className="content">作品: {item.content}</p>
+//           </li>
+//         ))}
+//       </ul>
+//     ) : (
+//       <div>暂无数据</div>
+//     )}
+//   </div>
+// )
+
+// 方法二
+function renderList() {
+  if (list.length > 0) {
+    return (
+      <ul>
+        {list.map((item) => (
+          <li key={item.id}>
+            <h3 className="title">歌手: {item.name}</h3>
+            <p className="content">作品: {item.content}</p>
+          </li>
+        ))}
+      </ul>
+    )
+  } else {
+    return <div>暂无数据</div>
+  }
+}
+
 const element = (
   <div>
-    <h3>列表渲染练习2</h3>
-    <ul>
-      {list.map((item) => (
-        <li key={item.id}>
-          <h3>商品名称: {item.name}</h3>
-          <p>商品价格: {item.price}</p>
-        </li>
-      ))}
-    </ul>
+    <h3>整体练习</h3>
+    {/* 将列表的渲染，封装成一个函数 */}
+    {renderList()}
   </div>
 )
 
