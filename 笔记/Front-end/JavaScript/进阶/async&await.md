@@ -8,16 +8,16 @@ async 和 await 是一对关键字
 
    只有遇到了await开始往下, 才是异步的开始
 
-```js
-console.log(1)
-async function fn () {
-  console.log(4)
-  const res = await 2
-  console.log(res)
-}
-fn()
-console.log(3)
-```
+    ```js
+    console.log(1)
+    async function fn () {
+      console.log(4)
+      const res = await 2
+      console.log(res)
+    }
+    fn()
+    console.log(3)
+    ```
 
 2. await 要用在 async 函数中
 
