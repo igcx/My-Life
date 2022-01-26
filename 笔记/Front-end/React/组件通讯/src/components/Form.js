@@ -1,6 +1,9 @@
 import { Component } from 'react'
 
 class Form extends Component {
+  state = {
+    content: ''
+  }
   render() {
     return (
       <div className="comment-send">
@@ -13,8 +16,10 @@ class Form extends Component {
             rows="5"
             placeholder="发条友善的评论"
             className="ipt-txt"
+            value={this.state.content}
+            onChange={(e) => this.setState({content: e.target.value})}
           />
-          <button className="comment-submit">发表评论</button>
+          <button className="comment-submit" onClick={this.add}>发表评论</button>
         </div>
         <div className="comment-emoji">
           <i className="face"></i>
@@ -22,6 +27,18 @@ class Form extends Component {
         </div>
       </div>
     )
+  }
+  add = () => {
+    // 判断
+    if (!this.state.content.trim()) {
+      return alert('评论内容不能为空！');
+    }
+    // 子传父 
+    this.props.add(this.state.content)
+    // 清空内容
+    this.setState({
+      content: ''
+    })
   }
 }
 
