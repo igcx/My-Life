@@ -1,29 +1,29 @@
 import React, { Component } from 'react'
+import propTypes from 'prop-types'
 
 export default class TodoMain extends Component {
+  // 添加 props 的校验
+  static propTypes = {
+    list: propTypes.array,
+  }
   render() {
+    const { list } = this.props
     return (
       <div>
         <section className="main">
           <input id="toggle-all" className="toggle-all" type="checkbox" />
           <label htmlFor="toggle-all">Mark all as complete</label>
           <ul className="todo-list">
-            <li className="completed">
-              <div className="view">
-                <input className="toggle" type="checkbox" checked />
-                <label>Taste JavaScript</label>
-                <button className="destroy"></button>
-              </div>
-              <input className="edit" value="Create a TodoMVC template" />
-            </li>
-            <li>
-              <div className="view">
-                <input className="toggle" type="checkbox" />
-                <label>Buy a unicorn</label>
-                <button className="destroy"></button>
-              </div>
-              <input className="edit" value="Rule the web" />
-            </li>
+            {list.map((item) => (
+              <li key={item.id} className={item.done ? 'completed' : ''}>
+                <div className="view">
+                  <input className="toggle" type="checkbox" checked={item.done} />
+                  <label>{item.name}</label>
+                  <button className="destroy"></button>
+                </div>
+                <input className="edit" value="Create a TodoMVC template" />
+              </li>
+            ))}
           </ul>
         </section>
       </div>
